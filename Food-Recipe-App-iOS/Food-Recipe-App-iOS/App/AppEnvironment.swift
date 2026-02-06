@@ -1,11 +1,18 @@
 
-
 final class AppEnvironment {
+
     static let shared = AppEnvironment()
 
+    let networking: Networking
     let recipeRepository: RecipeRepositoryProtocol
 
     private init() {
-        recipeRepository = RecipeRepository(apiClient: APIClient())
+
+        networking = HttpNetworking()
+
+        recipeRepository = RecipeRepository(
+            networking: networking
+        )
     }
 }
+

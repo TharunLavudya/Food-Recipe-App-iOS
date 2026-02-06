@@ -5,8 +5,6 @@
 //
 //  Created by rentamac on 2/4/26.
 //
-
-
 import Foundation
 
 protocol RecipeRepositoryProtocol {
@@ -15,16 +13,32 @@ protocol RecipeRepositoryProtocol {
 
 final class RecipeRepository: RecipeRepositoryProtocol {
 
-    private let apiClient: APIClient
+    private let networking: Networking
 
-    init(apiClient: APIClient) {
-        self.apiClient = apiClient
+    init(networking: Networking) {
+        self.networking = networking
+    }
+    
+    func fetchRecipes() async throws -> [Recipe] {
+
+        let response: RecipeResponse =
+        try await networking.request(
+            endpoint: RecipeEndpoint.getRecipes,
+            responseType: RecipeResponse.self
+        )
+
+        return response.recipes
     }
 
-    func fetchRecipes() async throws -> [Recipe] {
-        let response: RecipeResponse = try await apiClient.request(
-            endpoint: Endpoints.recipes
+    func searchRecipes(query: String) async throws -> [Recipe] {
+
+        let response: RecipeResponse =
+        try await networking.request(
+            endpoint: RecipeEndpoint.searchRecipes(query: query),
+            responseType: RecipeResponse.self
         )
         return response.recipes
     }
+    
 }
+

@@ -11,7 +11,6 @@ import CoreData
 @main
 struct Food_Recipe_App_iOSApp: App {
     
-
     var body: some Scene {
         WindowGroup {
             AppRouter()

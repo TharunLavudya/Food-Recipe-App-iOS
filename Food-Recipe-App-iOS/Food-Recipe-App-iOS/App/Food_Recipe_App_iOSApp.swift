@@ -4,13 +4,15 @@
 //
 //  Created by rentamac on 2/3/26.
 //
-
 import SwiftUI
-import CoreData
+import FirebaseCore
 
 @main
 struct Food_Recipe_App_iOSApp: App {
-    
+
+    init() {
+        FirebaseApp.configure()
+    }
 
     var body: some Scene {
         WindowGroup {

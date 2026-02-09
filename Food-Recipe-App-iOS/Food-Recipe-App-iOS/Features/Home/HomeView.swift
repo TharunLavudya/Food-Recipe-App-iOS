@@ -4,15 +4,18 @@ struct HomeView: View {
 
     @StateObject private var viewModel: HomeViewModel
     @Binding var selectedTab: Int
+    @ObservedObject var authViewModel: AuthViewModel
 
     init(
             repository: RecipeRepositoryProtocol,
-            selectedTab: Binding<Int>
+            selectedTab: Binding<Int>,
+            authViewModel: AuthViewModel
         ) {
             _viewModel = StateObject(
                 wrappedValue: HomeViewModel(repository: repository)
             )
             _selectedTab = selectedTab
+            self.authViewModel = authViewModel
         }
 
     var body: some View {
@@ -48,6 +51,14 @@ extension HomeView {
             }
 
             Spacer()
+            
+            Button {
+                       authViewModel.signOut()
+                   } label: {
+                       Image(systemName: "arrow.right.square")
+                           .font(.title2)
+                           .foregroundColor(.red)
+                   }
 
             Image(systemName: "person.crop.circle.fill")
                 .font(.largeTitle)

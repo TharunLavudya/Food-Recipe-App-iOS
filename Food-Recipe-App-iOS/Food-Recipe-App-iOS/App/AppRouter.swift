@@ -1,10 +1,18 @@
-
-
 import SwiftUI
 
 struct AppRouter: View {
+
+    @StateObject private var authViewModel = AuthViewModel()
+
     var body: some View {
-        MainTabView()
+
+        if authViewModel.isAuthenticated {
+            MainTabView(authViewModel: authViewModel)
+        } else {
+            NavigationStack {
+                LoginView(viewModel: authViewModel)
+            }
+        }
     }
 }
 
@@ -13,13 +21,15 @@ struct MainTabView: View {
 
     let environment = AppEnvironment.shared
     @State private var selectedTab = 0
-
+    @ObservedObject var authViewModel: AuthViewModel
+    
     var body: some View {
         TabView(selection: $selectedTab) {
 
             HomeView(
                 repository: environment.recipeRepository,
-                selectedTab: $selectedTab
+                selectedTab: $selectedTab,
+                authViewModel: authViewModel
             )
                 .tabItem {
                     Image(systemName: "house.fill")

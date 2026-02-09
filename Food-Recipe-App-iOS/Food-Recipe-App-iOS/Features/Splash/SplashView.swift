@@ -3,6 +3,7 @@ import SwiftUI
 struct SplashView: View {
     @State private var animate = false
     @State private var navigateToLogin = false
+    @StateObject private var authViewModel = AuthViewModel()
 
     var body: some View {
         NavigationStack {
@@ -66,7 +67,7 @@ struct SplashView: View {
                 }
             }
             .navigationDestination(isPresented: $navigateToLogin) {
-                LoginView()
+                AppRouter()
             }
         }
     }

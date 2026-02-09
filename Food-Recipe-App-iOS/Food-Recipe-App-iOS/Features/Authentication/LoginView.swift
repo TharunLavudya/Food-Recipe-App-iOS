@@ -39,7 +39,7 @@ struct LoginView: View {
                     SecureField("Password", text: $viewModel.password)
                 }
 
-                Spacer() // 👈 pushes eye button to the right
+                Spacer() //  pushes eye button to the right
 
                 Button {
                     isPasswordVisible.toggle()

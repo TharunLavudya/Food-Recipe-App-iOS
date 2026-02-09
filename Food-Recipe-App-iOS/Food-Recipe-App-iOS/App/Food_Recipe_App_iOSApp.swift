@@ -6,14 +6,18 @@
 //
 
 import SwiftUI
-import CoreData
+import FirebaseCore
 
 @main
 struct Food_Recipe_App_iOSApp: App {
-    
+
+    init() {
+        FirebaseApp.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
-            AppRouter()
+            ContentView()
         }
     }
 }

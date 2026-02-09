@@ -85,6 +85,12 @@ struct SignupView: View {
                     .foregroundColor(.red)
                     .font(.footnote)
             }
+            if let success = viewModel.successMessage {
+                Text(success)
+                    .foregroundColor(.green)
+                    .font(.footnote)
+            }
+
 
             // Accept terms
             Toggle(isOn: $acceptTerms) {
@@ -104,7 +110,13 @@ struct SignupView: View {
                     .cornerRadius(12)
             }
             .disabled(!acceptTerms)
-
+            NavigationLink {
+                LoginView(viewModel: AuthViewModel())
+            } label: {
+                Text("Already have an account? Sign In")
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+            }
             Spacer()
         }
         .padding()

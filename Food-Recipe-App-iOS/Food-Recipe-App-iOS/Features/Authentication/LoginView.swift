@@ -7,7 +7,10 @@ struct LoginView: View {
     @State private var resetEmail = ""
     @State private var resetMessage: String?
     
-    //  Eye toggle state
+    // Remember Me
+    @State private var rememberMe = false
+    
+    // Eye toggle state
     @State private var isPasswordVisible = false
 
     var body: some View {
@@ -22,6 +25,7 @@ struct LoginView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
+            // Email
             TextField("Email", text: $viewModel.email)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
@@ -29,7 +33,7 @@ struct LoginView: View {
                 .background(Color(.systemGray6))
                 .cornerRadius(10)
             
-            //Password field with eye toggle (FIXED LAYOUT)
+            // Password with eye toggle
             HStack {
                 if isPasswordVisible {
                     TextField("Password", text: $viewModel.password)
@@ -39,7 +43,7 @@ struct LoginView: View {
                     SecureField("Password", text: $viewModel.password)
                 }
 
-                Spacer() // 👈 pushes eye button to the right
+                Spacer()
 
                 Button {
                     isPasswordVisible.toggle()
@@ -53,10 +57,13 @@ struct LoginView: View {
             .background(Color(.systemGray6))
             .cornerRadius(10)
 
-
-            // Forgot Password
+            // Remember Me and  Forgot Password row
             HStack {
+                Toggle("Remember Me", isOn: $rememberMe)
+                    .font(.footnote)
+
                 Spacer()
+
                 Button("Forgot Password?") {
                     resetEmail = viewModel.email
                     showResetAlert = true
@@ -65,6 +72,7 @@ struct LoginView: View {
                 .foregroundColor(.orange)
             }
 
+            // Error / Success messages
             if let error = viewModel.errorMessage {
                 Text(error)
                     .foregroundColor(.red)
@@ -77,8 +85,20 @@ struct LoginView: View {
                     .font(.footnote)
             }
             
+            // Sign In button
             Button {
-                Task { await viewModel.signIn() }
+                Task {
+                    await viewModel.signIn()
+                    
+                    // Save or clear credentials based on Remember Me
+                    if rememberMe {
+                        UserDefaults.standard.set(viewModel.email, forKey: "savedEmail")
+                        UserDefaults.standard.set(viewModel.password, forKey: "savedPassword")
+                    } else {
+                        UserDefaults.standard.removeObject(forKey: "savedEmail")
+                        UserDefaults.standard.removeObject(forKey: "savedPassword")
+                    }
+                }
             } label: {
                 if viewModel.isLoading {
                     ProgressView()
@@ -92,8 +112,9 @@ struct LoginView: View {
                 }
             }
             
+            // Go to Sign Up
             NavigationLink {
-                SignupView(viewModel: viewModel)
+                SignupView(viewModel: AuthViewModel())
             } label: {
                 Text("Don’t have an account? Sign up")
                     .font(.footnote)
@@ -104,6 +125,20 @@ struct LoginView: View {
         }
         .padding()
         .navigationBarHidden(true)
+        .onAppear {
+            // Load saved credentials ONLY if user chose Remember Me before
+            if let savedEmail = UserDefaults.standard.string(forKey: "savedEmail"),
+               let savedPassword = UserDefaults.standard.string(forKey: "savedPassword") {
+                viewModel.email = savedEmail
+                viewModel.password = savedPassword
+                rememberMe = true
+            } else {
+                // Ensure fields are empty by default
+                viewModel.email = ""
+                viewModel.password = ""
+                rememberMe = false
+            }
+        }
         .alert("Reset Password", isPresented: $showResetAlert) {
             TextField("Enter your email", text: $resetEmail)
             Button("Send") {
@@ -117,7 +152,7 @@ struct LoginView: View {
         }
     }
     
-    // MARK: - Password Reset
+    // Password Reset
     private func sendPasswordReset() async {
         do {
             try await viewModel.sendPasswordReset(email: resetEmail)

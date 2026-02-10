@@ -19,19 +19,21 @@ struct HomeView: View {
         }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+        NavigationStack {                // ✅ ADDED
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
 
-                headerSection
-                searchSection
-                categorySection
-                popularRecipesSection
-                newRecipesSection
+                    headerSection
+                    searchSection
+                    categorySection
+                    popularRecipesSection
+                    newRecipesSection
+                }
+                .padding()
             }
-            .padding()
-        }
-        .task {
-            await viewModel.loadRecipes()
+            .task {
+                await viewModel.loadRecipes()
+            }
         }
     }
 }
@@ -114,6 +116,7 @@ extension HomeView {
         }
     }
 
+    // ✅ ONLY CHANGE HERE
     var popularRecipesSection: some View {
         VStack(alignment: .leading) {
             Text("Popular Recipes")
@@ -122,13 +125,22 @@ extension HomeView {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(viewModel.filteredRecipes.prefix(10)) { recipe in
-                        RecipeRowView(recipe: recipe)
+                        NavigationLink {                     // ✅ ADDED
+                            RecipeDetailView(
+                                recipe: recipe,
+                                allRecipes: viewModel.recipes
+                            )
+                        } label: {
+                            RecipeRowView(recipe: recipe)
+                        }
+                        .buttonStyle(.plain)                // ✅ ADDED
                     }
                 }
             }
         }
     }
 
+    // ✅ ONLY CHANGE HERE
     var newRecipesSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("New Recipes")
@@ -136,32 +148,40 @@ extension HomeView {
 
             LazyVStack(spacing: 16) {
                 ForEach(viewModel.filteredRecipes.prefix(10)) { recipe in
-                    HStack(spacing: 12) {
-                        AsyncImage(url: URL(string: recipe.image)) { image in
-                            image.resizable()
-                        } placeholder: {
-                            Color.gray.opacity(0.3)
+                    NavigationLink {                         // ✅ ADDED
+                        RecipeDetailView(
+                            recipe: recipe,
+                            allRecipes: viewModel.recipes
+                        )
+                    } label: {
+                        HStack(spacing: 12) {
+                            AsyncImage(url: URL(string: recipe.image)) { image in
+                                image.resizable()
+                            } placeholder: {
+                                Color.gray.opacity(0.3)
+                            }
+                            .frame(width: 80, height: 80)
+                            .cornerRadius(12)
+
+                            VStack(alignment: .leading) {
+                                Text(recipe.name)
+                                    .font(.headline)
+
+                                Text("\(recipe.cookTimeMinutes) mins")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "bookmark")
+                                .foregroundColor(.green)
                         }
-                        .frame(width: 80, height: 80)
-                        .cornerRadius(12)
-
-                        VStack(alignment: .leading) {
-                            Text(recipe.name)
-                                .font(.headline)
-
-                            Text("\(recipe.cookTimeMinutes) mins")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-
-                        Spacer()
-
-                        Image(systemName: "bookmark")
-                            .foregroundColor(.green)
                     }
+                    .buttonStyle(.plain)                    // ✅ ADDED
                 }
             }
         }
     }
-
 }
+

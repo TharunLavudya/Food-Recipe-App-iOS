@@ -1,5 +1,5 @@
 import Foundation
 
-struct RecipeResponse: Codable {
+struct RecipeResponse: Decodable {
     let recipes: [Recipe]
 }

@@ -19,7 +19,7 @@ struct HomeView: View {
         }
 
     var body: some View {
-        NavigationStack {                // ✅ ADDED
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
 
@@ -116,7 +116,7 @@ extension HomeView {
         }
     }
 
-    // ✅ ONLY CHANGE HERE
+
     var popularRecipesSection: some View {
         VStack(alignment: .leading) {
             Text("Popular Recipes")
@@ -125,7 +125,7 @@ extension HomeView {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(viewModel.filteredRecipes.prefix(10)) { recipe in
-                        NavigationLink {                     // ✅ ADDED
+                        NavigationLink {
                             RecipeDetailView(
                                 recipe: recipe,
                                 allRecipes: viewModel.recipes
@@ -133,14 +133,14 @@ extension HomeView {
                         } label: {
                             RecipeRowView(recipe: recipe)
                         }
-                        .buttonStyle(.plain)                // ✅ ADDED
+                        .buttonStyle(.plain)
                     }
                 }
             }
         }
     }
 
-    // ✅ ONLY CHANGE HERE
+   
     var newRecipesSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("New Recipes")
@@ -148,7 +148,7 @@ extension HomeView {
 
             LazyVStack(spacing: 16) {
                 ForEach(viewModel.filteredRecipes.prefix(10)) { recipe in
-                    NavigationLink {                         // ✅ ADDED
+                    NavigationLink {
                         RecipeDetailView(
                             recipe: recipe,
                             allRecipes: viewModel.recipes
@@ -178,7 +178,7 @@ extension HomeView {
                                 .foregroundColor(.green)
                         }
                     }
-                    .buttonStyle(.plain)                    // ✅ ADDED
+                    .buttonStyle(.plain)                   
                 }
             }
         }

@@ -3,18 +3,35 @@ import SwiftUI
 struct AppRouter: View {
 
     @StateObject private var authViewModel = AuthViewModel()
+    @State private var showSplash = true
 
     var body: some View {
 
-        if authViewModel.isAuthenticated {
-            MainTabView(authViewModel: authViewModel)
-        } else {
-            NavigationStack {
-                LoginView(viewModel: authViewModel)
+        Group {
+
+            if showSplash {
+
+                SplashView()
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                            showSplash = false
+                        }
+                    }
+
+            } else if authViewModel.isAuthenticated {
+
+                MainTabView(authViewModel: authViewModel)
+
+            } else {
+
+                NavigationStack {
+                    LoginView(viewModel: authViewModel)
+                }
             }
         }
     }
 }
+
 
 
 struct MainTabView: View {

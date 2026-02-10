@@ -2,7 +2,7 @@ import SwiftUI
 
 struct LoginView: View {
     
-    @StateObject var viewModel: AuthViewModel
+    @ObservedObject var viewModel: AuthViewModel
     @State private var showResetAlert = false
     @State private var resetEmail = ""
     @State private var resetMessage: String?
@@ -114,7 +114,7 @@ struct LoginView: View {
             
             // Go to Sign Up
             NavigationLink {
-                SignupView(viewModel: AuthViewModel())
+                SignupView(viewModel: viewModel)
             } label: {
                 Text("Don’t have an account? Sign up")
                     .font(.footnote)

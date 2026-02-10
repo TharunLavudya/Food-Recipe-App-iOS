@@ -111,7 +111,7 @@ struct SignupView: View {
             }
             .disabled(!acceptTerms)
             NavigationLink {
-                LoginView(viewModel: AuthViewModel())
+                LoginView(viewModel: viewModel)
             } label: {
                 Text("Already have an account? Sign In")
                     .font(.footnote)
@@ -123,3 +123,4 @@ struct SignupView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+

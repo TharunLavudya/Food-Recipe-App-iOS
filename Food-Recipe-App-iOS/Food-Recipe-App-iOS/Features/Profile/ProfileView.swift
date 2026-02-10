@@ -4,6 +4,7 @@ struct ProfileView: View {
     @State private var selectedSegment = 0
     @State private var recipeCount = 0
     @State private var showOptionsMenu = false  // Toggles the visibility of the options (ellipsis) menu
+    @ObservedObject var authViewModel = AuthViewModel()
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -86,28 +87,32 @@ struct ProfileView: View {
     }
     private var profileHeader: some View {
         VStack(alignment: .leading) {
-            HStack {
+            HStack(alignment: .top, spacing: 20) {
                 Image("female")
                     .resizable()
                     .scaledToFill()
                     .frame(width: 100, height: 100)
                     .clipShape(Circle())
-                    .padding(.trailing, 20)
-
-                VStack(alignment: .leading) {
-                    Text("Rebekaah Mikelson")
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(authViewModel.username)
                         .font(.headline)
                         .padding(.bottom, 5)
+                        .padding(.top,10)
 
-                    Text("Private Chef\nPassionate about food info ")
+                    Text("Private Chef \nPassionate about food info ")
                         .font(.subheadline)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
-
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: 120)
             Text("Total recipes posted: \(recipeCount)")
         }
+        .padding(.horizontal, 20)
     }
-
+    
+    
     private var segmentSection: some View {
         HStack(spacing: 16) {
             Button {

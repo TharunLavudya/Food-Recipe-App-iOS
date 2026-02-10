@@ -41,13 +41,14 @@ extension HomeView {
     var headerSection: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text("Hello 👋")
-                    .font(.caption)
+                Text("Hello \(authViewModel.username)")
+                    .font(.headline)
                     .foregroundColor(.secondary)
+                    .bold()
 
                 Text("What are you cooking today?")
                     .font(.title2)
-                    .bold()
+                    
             }
 
             Spacer()

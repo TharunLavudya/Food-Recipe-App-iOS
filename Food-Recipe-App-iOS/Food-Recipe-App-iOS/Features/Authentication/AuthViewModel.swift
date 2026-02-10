@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import FirebaseAuth
 
 @MainActor
 final class AuthViewModel: ObservableObject {
@@ -14,13 +15,28 @@ final class AuthViewModel: ObservableObject {
     @Published var isAuthenticated: Bool = false
     @Published var successMessage: String?
     
+    @Published var username: String = ""
+    
     private let authService: AuthService
     
     init(authService: AuthService = FirebaseAuthService()) {
         self.authService = authService
         self.isAuthenticated = authService.getCurrentUserId() != nil
+        fetchUsername()
     }
     
+    func fetchUsername() {
+        guard let email = Auth.auth().currentUser?.email else {
+            username = "User"
+            return
+        }
+
+        let raw = email.split(separator: "@").first.map(String.init) ?? "User"
+        username = raw.capitalized
+    }
+
+    
+
     // Validation Helpers
     
     private func isValidGmail(_ email: String) -> Bool {
@@ -66,6 +82,7 @@ final class AuthViewModel: ObservableObject {
 
         do {
             try await authService.signIn(email: email, password: password)
+            fetchUsername()
             isAuthenticated = true
         } catch {
             // message for any login failure
@@ -109,6 +126,7 @@ final class AuthViewModel: ObservableObject {
 
         do {
             try await authService.signUp(email: email, password: password)
+            fetchUsername()
             isAuthenticated = true
             successMessage = "Sign up successful! You can now sign in."
 

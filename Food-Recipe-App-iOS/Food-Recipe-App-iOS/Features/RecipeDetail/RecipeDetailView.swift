@@ -16,8 +16,6 @@ struct RecipeDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-
-                // Recipe Image
                 AsyncImage(url: URL(string: viewModel.recipe.image)) { image in
                     image
                         .resizable()
@@ -28,13 +26,11 @@ struct RecipeDetailView: View {
                 .frame(height: 220)
                 .cornerRadius(20)
 
-                // Title + Rating
                 VStack(alignment: .leading, spacing: 6) {
                     Text(viewModel.recipe.name)
                         .font(.title2)
                         .bold()
 
-                    // ⭐ Rating Stars
                     HStack(spacing: 4) {
                         ForEach(1...5, id: \.self) { star in
                             Image(systemName: star <= viewModel.userRating ? "star.fill" : "star")
@@ -54,7 +50,6 @@ struct RecipeDetailView: View {
                         .foregroundColor(.secondary)
                 }
 
-                // Cooking Time + Save / Unsave
                 HStack {
                     Label("\(viewModel.recipe.cookTimeMinutes) min", systemImage: "clock")
                         .font(.caption)
@@ -68,21 +63,17 @@ struct RecipeDetailView: View {
                             .foregroundColor(.green)
                     }
                 }
-
-                // 🔹 Tabs (ADDED third button)
                 HStack {
                     tabButton(title: "Ingredients", tab: .ingredients)
                     tabButton(title: "Procedure", tab: .procedure)
-                    tabButton(title: "More like this", tab: .similar)   // ✅ ADDED
+                    tabButton(title: "More like this", tab: .similar)
                 }
                 .padding(4)
                 .background(Color(.systemGray6))
                 .cornerRadius(12)
 
-                // 🔹 Tab Content
                 VStack(alignment: .leading, spacing: 12) {
 
-                    // INGREDIENTS
                     if viewModel.selectedTab == .ingredients {
                         ForEach(viewModel.recipe.ingredients, id: \.self) { ingredient in
                             Text("• \(ingredient)")
@@ -93,7 +84,6 @@ struct RecipeDetailView: View {
                         }
                     }
 
-                    // PROCEDURE
                     else if viewModel.selectedTab == .procedure {
                         ForEach(viewModel.recipe.instructions.indices, id: \.self) { index in
                             VStack(alignment: .leading, spacing: 6) {
@@ -109,7 +99,6 @@ struct RecipeDetailView: View {
                         }
                     }
 
-                    // ⭐ MORE LIKE THIS (SIMILAR CUISINE)
                     else {
                         LazyVStack(spacing: 16) {
                             ForEach(viewModel.relatedRecipes.prefix(5)) { recipe in
@@ -155,7 +144,6 @@ struct RecipeDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    // Tab Button
     private func tabButton(
         title: String,
         tab: RecipeDetailViewModel.Tab

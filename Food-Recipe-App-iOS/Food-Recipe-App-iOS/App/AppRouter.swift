@@ -68,7 +68,7 @@ struct MainTabView: View {
                 }
                 .tag(2)
 
-            ProfileView()
+            ProfileView(authViewModel: authViewModel)
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("Profile")

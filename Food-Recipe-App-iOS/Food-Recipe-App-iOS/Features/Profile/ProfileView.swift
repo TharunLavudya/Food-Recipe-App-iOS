@@ -4,7 +4,9 @@ struct ProfileView: View {
     @State private var selectedSegment = 0
     @State private var recipeCount = 0
     @State private var showOptionsMenu = false  // Toggles the visibility of the options (ellipsis) menu
-    @ObservedObject var authViewModel = AuthViewModel()
+    @ObservedObject var authViewModel : AuthViewModel
+    @State private var showEditProfile = false
+
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -46,7 +48,7 @@ struct ProfileView: View {
             if showOptionsMenu {
                 VStack(alignment: .leading, spacing: 16) {
                     Button {
-                        print("Edit Details tapped")
+                        showEditProfile = true
                         withAnimation {
                             showOptionsMenu = false
                         }
@@ -83,6 +85,10 @@ struct ProfileView: View {
                     showOptionsMenu = false
                 }
             }
+            
+        }
+        .sheet(isPresented: $showEditProfile) {
+            EditProfileView(authViewModel: authViewModel)
         }
     }
     private var profileHeader: some View {
@@ -100,7 +106,8 @@ struct ProfileView: View {
                         .padding(.bottom, 5)
                         .padding(.top,10)
 
-                    Text("Private Chef \nPassionate about food info ")
+//                    Text("Private Chef \nPassionate about food info ")
+                    Text(authViewModel.bio)
                         .font(.subheadline)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -237,6 +244,6 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView()
+    ProfileView(authViewModel: AuthViewModel())
 }
 

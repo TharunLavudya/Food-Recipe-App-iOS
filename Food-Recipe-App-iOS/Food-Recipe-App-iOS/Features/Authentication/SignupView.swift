@@ -23,7 +23,7 @@ struct SignupView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             // Name
-            TextField("Name", text: $name)
+            TextField("Name", text: $viewModel.username)
                 .textInputAutocapitalization(.words)
                 .padding()
                 .background(Color(.systemGray6))

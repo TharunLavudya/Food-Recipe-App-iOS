@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		241CC5882F33866B00639B77 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 241CC5872F33866B00639B77 /* FirebaseAuth */; };
 		241CC58A2F33866B00639B77 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 241CC5892F33866B00639B77 /* FirebaseCore */; };
+		242DD95F2F3C77EA00CDEC0D /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 242DD95E2F3C77EA00CDEC0D /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 			files = (
 				241CC58A2F33866B00639B77 /* FirebaseCore in Frameworks */,
 				241CC5882F33866B00639B77 /* FirebaseAuth in Frameworks */,
+				242DD95F2F3C77EA00CDEC0D /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40,6 +42,7 @@
 			isa = PBXGroup;
 			children = (
 				240641D82F33267800293BD7 /* Food-Recipe-App-iOS */,
+				242DD95D2F3C77EA00CDEC0D /* Frameworks */,
 				240641D72F33267800293BD7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -50,6 +53,13 @@
 				240641D62F33267800293BD7 /* Food-Recipe-App-iOS.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		242DD95D2F3C77EA00CDEC0D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -74,6 +84,7 @@
 			packageProductDependencies = (
 				241CC5872F33866B00639B77 /* FirebaseAuth */,
 				241CC5892F33866B00639B77 /* FirebaseCore */,
+				242DD95E2F3C77EA00CDEC0D /* FirebaseFirestore */,
 			);
 			productName = "Food-Recipe-App-iOS";
 			productReference = 240641D62F33267800293BD7 /* Food-Recipe-App-iOS.app */;
@@ -370,6 +381,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 241CC5862F33866B00639B77 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCore;
+		};
+		242DD95E2F3C77EA00CDEC0D /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 241CC5862F33866B00639B77 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

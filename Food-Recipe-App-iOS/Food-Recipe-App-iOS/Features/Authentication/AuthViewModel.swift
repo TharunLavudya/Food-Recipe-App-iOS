@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 import Combine
 import FirebaseAuth
+import FirebaseFirestore
 
 @MainActor
 final class AuthViewModel: ObservableObject {
@@ -14,27 +15,54 @@ final class AuthViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var isAuthenticated: Bool = false
     @Published var successMessage: String?
-    
+
+    @Published var bio: String = ""
     @Published var username: String = ""
     
     private let authService: AuthService
+    private let db = Firestore.firestore()
     
     init(authService: AuthService = FirebaseAuthService()) {
         self.authService = authService
         self.isAuthenticated = authService.getCurrentUserId() != nil
-        fetchUsername()
-    }
-    
-    func fetchUsername() {
-        guard let email = Auth.auth().currentUser?.email else {
-            username = "User"
-            return
+        
+        if isAuthenticated {
+            fetchUserProfile()
         }
-
-        let raw = email.split(separator: "@").first.map(String.init) ?? "User"
-        username = raw.capitalized
     }
+    // Fetch Profile
+    func fetchUserProfile() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        db.collection("users").document(uid).getDocument { snapshot, _ in
+            guard let data = snapshot?.data() else { return }
+            
+            self.username = data["username"] as? String ?? ""
+            self.bio = data["bio"] as? String ?? ""
+        }
+    }
+    //  Update Profile
+    func updateProfile(newUsername: String, newBio: String) async {
 
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+//        print("Before update:", username, bio)
+        do {
+            try await db.collection("users")
+                .document(uid)
+                .setData([
+                    "username": newUsername.capitalized,
+                    "bio": newBio
+                ], merge: true)
+
+            
+            self.username = newUsername.capitalized
+            self.bio = newBio
+//          print("After update:", username, bio)
+        } catch {
+            errorMessage = "Profile update failed"
+        }
+    }
     
 
     // Validation Helpers
@@ -73,7 +101,7 @@ final class AuthViewModel: ObservableObject {
         return nil //  Password is strong
     }
 
-    // - Sign In
+    // Sign In
     
     func signIn() async {
         isLoading = true
@@ -82,17 +110,16 @@ final class AuthViewModel: ObservableObject {
 
         do {
             try await authService.signIn(email: email, password: password)
-            fetchUsername()
             isAuthenticated = true
+            fetchUserProfile()
         } catch {
-            // message for any login failure
             errorMessage = "Incorrect credentials"
         }
 
         isLoading = false
     }
 
-    // MARK: - Sign Up (STRICT VALIDATION)
+    // Sign Up 
     
     func signUp() async {
         
@@ -121,16 +148,27 @@ final class AuthViewModel: ObservableObject {
             return
         }
 
-        //  Only reach here if ALL validations pass
         isLoading = true
 
         do {
             try await authService.signUp(email: email, password: password)
-            fetchUsername()
+
+            guard let uid = Auth.auth().currentUser?.uid else { return }
+            
+            try await db.collection("users")
+                .document(uid)
+                .setData([
+                    "username": username.capitalized,
+                    "email": email,
+                    "bio": "",
+                    "createdAt": Timestamp()
+                ])
+            self.username = username.capitalized
+            self.bio = ""
+            
             isAuthenticated = true
             successMessage = "Sign up successful! You can now sign in."
 
-            // Clear fields after success
             email = ""
             password = ""
             confirmPassword = ""

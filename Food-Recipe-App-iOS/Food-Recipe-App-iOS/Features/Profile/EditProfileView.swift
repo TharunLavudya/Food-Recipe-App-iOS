@@ -1,3 +1,11 @@
+//
+//  EditProfileView.swift
+//  Food-Recipe-App-iOS
+//
+//  Created by rentamac on 2/11/26.
+//
+
+
 import SwiftUI
 
 struct EditProfileView: View {
@@ -70,15 +78,11 @@ struct EditProfileView: View {
     }
     
     private func saveProfile() {
-        isSaving = true
-        
         Task {
             await authViewModel.updateProfile(
                 newUsername: editedUsername,
                 newBio: editedBio
             )
-            
-            isSaving = false
             dismiss()
         }
     }

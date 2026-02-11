@@ -57,10 +57,7 @@ struct ProfileView: View {
                     }
 
                     Button {
-                        print("Logout tapped")
-                        withAnimation {
-                            showOptionsMenu = false
-                        }
+                        authViewModel.signOut()
                     } label: {
                         Label("Logout", systemImage: "rectangle.portrait.and.arrow.right")
                     }

@@ -54,14 +54,6 @@ extension HomeView {
             }
 
             Spacer()
-            
-            Button {
-                       authViewModel.signOut()
-                   } label: {
-                       Image(systemName: "arrow.right.square")
-                           .font(.title2)
-                           .foregroundColor(.red)
-                   }
 
             Image(systemName: "person.crop.circle.fill")
                 .font(.largeTitle)

@@ -156,23 +156,37 @@ struct ProfileView: View {
             if viewModel.recipes.isEmpty {
 
                 Text("No recipes added yet")
-                    .foregroundColor(.gray)
-                    .padding(.top, 40)
+                    .font(.subheadline.weight(.medium))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(.green.opacity(0.15))
+                    .foregroundColor(.green)
+                    .frame(maxWidth: .infinity,alignment: .center)
 
             } else {
-
                 ForEach(viewModel.recipes) { recipe in
-
-                    recipeCard(
-                        title: recipe.name,
-                        duration: "\(recipe.cookTimeMinutes) min"
-                    )
+                    NavigationLink {
+                        RecipeDetailView(
+                            recipe: recipe,
+                            allRecipes: viewModel.recipes
+                        )
+                    }label: {
+                        recipeCard(
+                            title: recipe.name,
+                            duration: "\(recipe.cookTimeMinutes) min"
+                        ){
+                            Task {
+                                await viewModel.deleteRecipe(recipe)
+                            }
+                        }
+                    }
                 }
+
             }
         }
     }
     //reusabale recipe card view used in recipelist
-    private func recipeCard(title: String, duration: String) -> some View {
+    private func recipeCard(title: String, duration: String, onDelete: @escaping () -> Void ) -> some View {
         ZStack(alignment: .bottomLeading) {
             Image("bg")
                 .resizable()
@@ -191,6 +205,24 @@ struct ProfileView: View {
                     .foregroundColor(.white.opacity(0.8))
             }
             .padding()
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+
+                    Button {
+                        onDelete()
+                    } label: {
+                        Image(systemName: "trash.fill")
+                            .foregroundColor(.white)
+                            .padding(8)
+                            .background(Color.red)
+                            .clipShape(Circle())
+                    }
+                    .padding(10)
+                }
+            }
+
         }
         .background(
             LinearGradient(

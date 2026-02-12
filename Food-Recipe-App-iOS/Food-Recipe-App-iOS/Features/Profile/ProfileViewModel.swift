@@ -9,22 +9,23 @@ final class ProfileViewModel: ObservableObject {
     @Published var isShowingCuisinePicker = false
     @Published var isLoading = false
     @Published var recipes: [Recipe] = []
-    private let service = RecipeService()
     @Published var isLoading1 = false
+    
+    private let service = RecipeService()
+    private let repository: RecipeRepositoryProtocol
+    
+    init(repository: RecipeRepositoryProtocol =
+         RecipeRepository(networking: HttpNetworking())) {
+        self.repository = repository
+    }
+
     
     func fetchCuisines() async {
         guard allCuisines.isEmpty else { return }
         isLoading = true
         defer { isLoading = false }
         do {
-            let url = URL(string: "https://dummyjson.com/recipes")!
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let response = try JSONDecoder().decode(RecipeResponse.self, from: data)
-            // Extracting unique cuisines and maping them to Cuisine models
-            let cuisines = Set(response.recipes.map { $0.cuisine })
-                .sorted()
-                .map { Cuisine(name: $0) }
-            self.allCuisines = cuisines
+            allCuisines = try await repository.fetchCuisines()
         } catch {
             print("Cuisine fetch failed:", error)
         }
@@ -37,6 +38,16 @@ final class ProfileViewModel: ObservableObject {
             selectedCuisines.append(cuisine)
         }
     }
+    func deleteRecipe(_ recipe: Recipe) async {
+
+        do {
+            try await service.deleteRecipe(recipeId: recipe.id)
+            recipes.removeAll { $0.id == recipe.id }
+        } catch {
+            print("Delete failed:", error)
+        }
+    }
+
     
     func load() async {
 
@@ -52,5 +63,6 @@ final class ProfileViewModel: ObservableObject {
             isLoading1 = false
         }
 }
+
 
 

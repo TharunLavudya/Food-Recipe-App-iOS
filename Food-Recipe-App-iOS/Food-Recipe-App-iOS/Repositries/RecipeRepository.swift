@@ -9,6 +9,7 @@ import Foundation
 
 protocol RecipeRepositoryProtocol {
     func fetchRecipes() async throws -> [Recipe]
+    func fetchCuisines() async throws -> [Cuisine]
 }
 
 final class RecipeRepository: RecipeRepositoryProtocol {
@@ -39,6 +40,22 @@ final class RecipeRepository: RecipeRepositoryProtocol {
         )
         return response.recipes
     }
+    
+    func fetchCuisines() async throws -> [Cuisine] {
+
+        let response: RecipeResponse =
+        try await networking.request(
+            endpoint: RecipeEndpoint.getRecipes,
+            responseType: RecipeResponse.self
+        )
+
+        let cuisines = Set(response.recipes.map { $0.cuisine })
+            .sorted()
+            .map { Cuisine(name: $0) }
+
+        return cuisines
+    }
+
     
 }
 

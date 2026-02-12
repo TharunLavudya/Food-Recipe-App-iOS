@@ -43,4 +43,70 @@ extension RecipeService {
                 "isPublic": true
             ])
     }
+
+    func fetchUserRecipes() async throws -> [Recipe] {
+
+            guard let uid =
+                Auth.auth().currentUser?.uid
+            else {
+                return []
+            }
+
+            let snapshot =
+                try await db
+                    .collection("users")
+                    .document(uid)
+                    .collection("recipes")
+                    .getDocuments()
+
+            return snapshot.documents.compactMap { doc in
+
+                let data = doc.data()
+
+                return Recipe(
+                    id: data["id"] as? Int ?? 0,
+                    name: data["name"] as? String ?? "",
+                    ingredients: data["ingredients"] as? [String] ?? [],
+                    instructions: data["instructions"] as? [String] ?? [],
+                    cookTimeMinutes:
+                        data["cookTimeMinutes"] as? Int ?? 0,
+                    difficulty:
+                        data["difficulty"] as? String ?? "",
+                    cuisine:
+                        data["cuisine"] as? String ?? "",
+                    userId:
+                        data["userId"] as? Int ?? 0,
+                    image:
+                        data["image"] as? String ?? "",
+                    rating:
+                        data["rating"] as? Double ?? 0,
+                    reviewCount:
+                        data["reviewCount"] as? Int ?? 0,
+                    mealType:
+                        data["mealType"] as? [String] ?? []
+                )
+            }
+        }
+
+        func deleteRecipe(
+            recipeId: Int
+        ) async throws {
+
+            guard let uid =
+                Auth.auth().currentUser?.uid
+            else {
+                return
+            }
+
+            try await db
+                .collection("users")
+                .document(uid)
+                .collection("recipes")
+                .document(String(recipeId))
+                .delete()
+        }
 }
+
+
+
+

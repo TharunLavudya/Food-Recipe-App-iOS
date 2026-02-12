@@ -3,6 +3,8 @@ import SwiftUI
 struct RecipeDetailView: View {
 
     @StateObject private var viewModel: RecipeDetailViewModel
+    @EnvironmentObject var favoritesVM: FavoritesViewModel
+    @EnvironmentObject var homeVM: HomeViewModel
 
     init(recipe: Recipe, allRecipes: [Recipe]) {
         _viewModel = StateObject(
@@ -45,7 +47,7 @@ struct RecipeDetailView: View {
                             .foregroundColor(.secondary)
                     }
 
-                    Text("\(viewModel.recipe.cookTimeMinutes) mins • \(viewModel.recipe.servings) serves")
+                    Text("\(viewModel.recipe.cookTimeMinutes) mins")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -57,10 +59,16 @@ struct RecipeDetailView: View {
                     Spacer()
 
                     Button {
-                        viewModel.toggleSave()
+                        Task {
+                            await favoritesVM.toggle(recipe: viewModel.recipe)
+                        }
                     } label: {
-                        Image(systemName: viewModel.isSaved ? "bookmark.fill" : "bookmark")
-                            .foregroundColor(.green)
+                        Image(systemName:
+                                favoritesVM.isFavorite(viewModel.recipe)
+                                ? "heart.fill"
+                                : "heart"
+                        )
+                        .foregroundColor(.green)
                     }
                 }
                 HStack {
@@ -105,7 +113,7 @@ struct RecipeDetailView: View {
                                 NavigationLink {
                                     RecipeDetailView(
                                         recipe: recipe,
-                                        allRecipes: viewModel.relatedRecipes
+                                        allRecipes: homeVM.recipes
                                     )
                                 } label: {
                                     HStack(spacing: 12) {

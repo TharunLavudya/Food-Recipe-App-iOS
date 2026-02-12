@@ -18,6 +18,7 @@ final class AuthViewModel: ObservableObject {
     @Published var username: String = ""
     
     private let authService: AuthService
+    private let userService = UserService()
     
     init(authService: AuthService = FirebaseAuthService()) {
         self.authService = authService
@@ -125,9 +126,17 @@ final class AuthViewModel: ObservableObject {
         isLoading = true
 
         do {
-            try await authService.signUp(email: email, password: password)
-            fetchUsername()
+            try await authService.signUp(
+                email: email,
+                password: password
+            )
+            try await userService.createUserDocument(
+                username: email.components(separatedBy: "@").first ?? "User",
+                email: email
+            )
+
             isAuthenticated = true
+
             successMessage = "Sign up successful! You can now sign in."
 
             // Clear fields after success

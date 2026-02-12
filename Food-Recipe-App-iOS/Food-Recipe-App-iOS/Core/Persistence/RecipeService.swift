@@ -29,6 +29,7 @@ extension RecipeService {
             .collection("recipes")
             .document(String(recipe.id))
             .setData([
+                "id": recipe.id,
                 "name": recipe.name,
                 "ingredients": recipe.ingredients,
                 "instructions": recipe.instructions,
@@ -64,7 +65,7 @@ extension RecipeService {
                 let data = doc.data()
 
                 return Recipe(
-                    id: data["id"] as? Int ?? 0,
+                    id: Int(doc.documentID) ?? 0,
                     name: data["name"] as? String ?? "",
                     ingredients: data["ingredients"] as? [String] ?? [],
                     instructions: data["instructions"] as? [String] ?? [],

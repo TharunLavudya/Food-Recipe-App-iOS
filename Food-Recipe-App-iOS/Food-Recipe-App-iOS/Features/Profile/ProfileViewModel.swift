@@ -38,6 +38,16 @@ final class ProfileViewModel: ObservableObject {
             selectedCuisines.append(cuisine)
         }
     }
+    func deleteRecipe(_ recipe: Recipe) async {
+
+        do {
+            try await service.deleteRecipe(recipeId: recipe.id)
+            recipes.removeAll { $0.id == recipe.id }
+        } catch {
+            print("Delete failed:", error)
+        }
+    }
+
     
     func load() async {
 
@@ -53,5 +63,6 @@ final class ProfileViewModel: ObservableObject {
             isLoading1 = false
         }
 }
+
 
 

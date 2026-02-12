@@ -8,7 +8,10 @@ final class ProfileViewModel: ObservableObject {
     @Published var selectedCuisines: [Cuisine] = []
     @Published var isShowingCuisinePicker = false
     @Published var isLoading = false
-
+    @Published var recipes: [Recipe] = []
+    private let service = RecipeService()
+    @Published var isLoading1 = false
+    
     func fetchCuisines() async {
         guard allCuisines.isEmpty else { return }
         isLoading = true
@@ -34,6 +37,20 @@ final class ProfileViewModel: ObservableObject {
             selectedCuisines.append(cuisine)
         }
     }
+    
+    func load() async {
+
+            isLoading1 = true
+
+            do {
+                recipes =
+                    try await service.fetchUserRecipes()
+            } catch {
+                print("Fetch user recipes error:", error)
+            }
+
+            isLoading1 = false
+        }
 }
 
 

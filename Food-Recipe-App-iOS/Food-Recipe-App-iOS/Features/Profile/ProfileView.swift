@@ -75,6 +75,11 @@ struct ProfileView: View {
                 .zIndex(10)
             }
         }
+        .task {
+            await viewModel.load()
+            recipeCount = viewModel.recipes.count
+        }
+
         .contentShape(Rectangle())
         // Dismiss options menu when tapping outside of it
         .onTapGesture {
@@ -145,16 +150,25 @@ struct ProfileView: View {
     }
     // List of recipes posted by the user (Static for now)
     private var recipeList: some View {
-        VStack(spacing: 16) {
-            recipeCard(
-                title: "Traditional spare ribs baked",
-                duration: "20 min"
-            )
 
-            recipeCard(
-                title: "Jollof roasted chicken with flavored rice",
-                duration: "20 min"
-            )
+        VStack(spacing: 16) {
+
+            if viewModel.recipes.isEmpty {
+
+                Text("No recipes added yet")
+                    .foregroundColor(.gray)
+                    .padding(.top, 40)
+
+            } else {
+
+                ForEach(viewModel.recipes) { recipe in
+
+                    recipeCard(
+                        title: recipe.name,
+                        duration: "\(recipe.cookTimeMinutes) min"
+                    )
+                }
+            }
         }
     }
     //reusabale recipe card view used in recipelist

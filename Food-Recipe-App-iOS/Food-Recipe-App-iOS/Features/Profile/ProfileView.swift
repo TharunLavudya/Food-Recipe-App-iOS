@@ -4,7 +4,8 @@ struct ProfileView: View {
     @State private var selectedSegment = 0
     @State private var recipeCount = 0
     @State private var showOptionsMenu = false  // Toggles the visibility of the options (ellipsis) menu
-    @ObservedObject var authViewModel = AuthViewModel()
+    @State private var showEditProfile = false
+    @ObservedObject var authViewModel : AuthViewModel
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -46,19 +47,17 @@ struct ProfileView: View {
             if showOptionsMenu {
                 VStack(alignment: .leading, spacing: 16) {
                     Button {
-                        print("Edit Details tapped")
+                        showEditProfile = true
                         withAnimation {
                             showOptionsMenu = false
                         }
                     } label: {
                         Label("Edit Details", systemImage: "pencil")
+                        
                     }
 
                     Button {
-                        print("Logout tapped")
-                        withAnimation {
-                            showOptionsMenu = false
-                        }
+                        authViewModel.signOut()
                     } label: {
                         Label("Logout", systemImage: "rectangle.portrait.and.arrow.right")
                     }
@@ -77,8 +76,12 @@ struct ProfileView: View {
         }
         .task {
             await viewModel.load()
-            recipeCount = viewModel.recipes.count
         }
+        .sheet(isPresented: $showEditProfile)
+        {
+            EditProfileView(authViewModel: authViewModel)
+        }
+
 
         .contentShape(Rectangle())
         // Dismiss options menu when tapping outside of it
@@ -93,7 +96,8 @@ struct ProfileView: View {
     private var profileHeader: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .top, spacing: 20) {
-                Image("female")
+            
+                Image(profileImage)
                     .resizable()
                     .scaledToFill()
                     .frame(width: 100, height: 100)
@@ -105,14 +109,14 @@ struct ProfileView: View {
                         .padding(.bottom, 5)
                         .padding(.top,10)
 
-                    Text("Private Chef \nPassionate about food info ")
+                    Text(authViewModel.bio)
                         .font(.subheadline)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: 120)
-            Text("Total recipes posted: \(recipeCount)")
+            Text("Total recipes posted: \(viewModel.recipes.count)")
         }
         .padding(.horizontal, 20)
     }
@@ -280,9 +284,20 @@ struct ProfileView: View {
             CuisinePickerView(viewModel: viewModel)
         }
     }
+    private var profileImage: String {
+        switch authViewModel.gender {
+        case "Male":
+            return "male"
+        case "Female":
+            return "female"
+        default:
+            return "default"
+        }
+    }
+
 }
 
 #Preview {
-    ProfileView()
+    ProfileView(authViewModel: AuthViewModel())
 }
 

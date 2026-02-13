@@ -56,21 +56,13 @@ extension HomeView {
             }
 
             Spacer()
-            
-            Button {
-                       authViewModel.signOut()
-                   } label: {
-                       Image(systemName: "arrow.right.square")
-                           .font(.title2)
-                           .foregroundColor(.red)
-                   }
-
-            Image(systemName: "person.crop.circle.fill")
-                .font(.largeTitle)
-                .foregroundColor(.green)
-                .onTapGesture {
-                        selectedTab = 3
-                    }
+        
+            Image(homeProfileImage)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 36, height: 36)
+                .clipShape(Circle())
+                .contentShape(Circle())
         }
     }
 
@@ -197,5 +189,15 @@ extension HomeView {
             }
         }
     }
+    var homeProfileImage: String {
+       switch authViewModel.gender {
+       case "Male":
+           return "male"
+       case "Female":
+           return "female"
+       default:
+           return "default"
+       }
+   }
 }
 

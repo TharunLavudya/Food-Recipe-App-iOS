@@ -24,6 +24,9 @@ final class SearchViewModel: ObservableObject {
             print("Error loading recipes:", error)
         }
     }
+    
+
+
 
     var filteredRecipes: [Recipe] {
 
@@ -41,9 +44,9 @@ final class SearchViewModel: ObservableObject {
                 filter.cookTimeRanges.contains { $0.contains(recipe.cookTimeMinutes) }
 
             // Servings
-            let matchesServings =
-                filter.servingsRanges.isEmpty ||
-                filter.servingsRanges.contains { $0.contains(recipe.servings) }
+//            let matchesServings =
+//                filter.servingsRanges.isEmpty ||
+//                filter.servingsRanges.contains { $0.contains(recipe.servings) }
 
             // Rating
             let matchesRating =
@@ -56,16 +59,16 @@ final class SearchViewModel: ObservableObject {
                 filter.cuisines.contains(recipe.cuisine)
 
             // Calories
-            let matchesCalories =
-                filter.calorieRanges.isEmpty ||
-                filter.calorieRanges.contains { $0.contains(recipe.caloriesPerServing) }
+//            let matchesCalories =
+//                filter.calorieRanges.isEmpty ||
+//                filter.calorieRanges.contains { $0.contains(recipe.caloriesPerServing) }
 
             return matchesSearch &&
                    matchesCookTime &&
-                   matchesServings &&
+//                   matchesServings &&
                    matchesRating &&
-                   matchesCuisine &&
-                   matchesCalories
+                   matchesCuisine 
+//                   matchesCalories
         }
     }
 

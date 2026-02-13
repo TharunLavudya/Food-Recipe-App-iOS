@@ -58,17 +58,13 @@ extension HomeView {
             }
 
             Spacer()
-            
-            Button {
-                       authViewModel.signOut()
-                   } label: {
-                       Image(systemName: "arrow.right.square")
-                           .font(.title2)
-                           .foregroundColor(.red)
-                   }
 
-            Image(systemName: "person.crop.circle.fill")
-                .font(.largeTitle)
+            Image(homeProfileImage)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 36, height: 36)
+                .clipShape(Circle())
+                .contentShape(Circle())
                 .foregroundColor(.green)
                 .onTapGesture {
                         selectedTab = 4
@@ -76,38 +72,6 @@ extension HomeView {
         }
     }
 
-//    var searchSection: some View {
-//        HStack(spacing: 12) {
-//
-//            HStack {
-//                Image(systemName: "magnifyingglass")
-//                    .foregroundColor(.gray)
-//
-//                Text("Search recipes")
-//                    .foregroundColor(.gray)
-//
-//                Spacer()
-//            }
-//            .padding(.horizontal, 12)
-//            .frame(height: 44) // 👈 controlled height
-//            .background(Color(.systemGray6))
-//            .cornerRadius(12)
-//            .onTapGesture {
-//                selectedTab = 1
-//            }
-//
-//            Button {
-//                selectedTab = 1
-//            } label: {
-//                Image(systemName: "slider.horizontal.3")
-//                    .frame(width: 44, height: 44)
-//                    .background(Color.green)
-//                    .foregroundColor(.white)
-//                    .cornerRadius(12)
-//            }
-//        }
-//    }
-    
     var searchSection: some View {
         HStack(spacing: 12) {
 
@@ -135,6 +99,9 @@ extension HomeView {
                     .foregroundColor(.white)
                     .cornerRadius(12)
             }
+            
+            
+
         }
     }
 

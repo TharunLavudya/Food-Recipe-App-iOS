@@ -55,12 +55,12 @@ final class HomeViewModel: ObservableObject {
 
             // Filters
             let matchesCookTime = filter.cookTimeRanges.isEmpty || filter.cookTimeRanges.contains { $0.contains(recipe.cookTimeMinutes) }
-            let matchesServings = filter.servingsRanges.isEmpty || filter.servingsRanges.contains { $0.contains(recipe.servings) }
+//            let matchesServings = filter.servingsRanges.isEmpty || filter.servingsRanges.contains { $0.contains(recipe.servings) }
             let matchesRating = filter.minRatings.isEmpty || filter.minRatings.contains { recipe.rating >= $0 }
             let matchesCuisine = filter.cuisines.isEmpty || filter.cuisines.contains(recipe.cuisine)
-            let matchesCalories = filter.calorieRanges.isEmpty || filter.calorieRanges.contains { $0.contains(recipe.caloriesPerServing) }
+//            let matchesCalories = filter.calorieRanges.isEmpty || filter.calorieRanges.contains { $0.contains(recipe.caloriesPerServing) }
 
-            return matchesCategory && matchesSearch && matchesCookTime && matchesServings && matchesRating && matchesCuisine && matchesCalories
+            return matchesCategory && matchesSearch && matchesCookTime  && matchesRating && matchesCuisine 
         }
     }
     

@@ -21,28 +21,7 @@ struct SearchView: View {
         NavigationStack {
 
             VStack {
-
-                // 🔍 Search + Filter Row
-//                HStack {
-//
-//                    TextField("Search by recipe or cuisine",
-//                              text: $viewModel.searchText)
-//                        .padding(12)
-//                        .background(Color(.systemGray6))
-//                        .cornerRadius(12)
-//
-//                    Button {
-//                        showFilter = true
-//                    } label: {
-//                        Image(systemName: "slider.horizontal.3")
-//                            .frame(width: 44, height: 44)
-//                            .background(Color.green)
-//                            .foregroundColor(.white)
-//                            .cornerRadius(12)
-//                    }
-//                }
-//                .padding()
-                
+            
                 HStack {
 
                     TextField("Search by recipe or cuisine",
@@ -58,6 +37,8 @@ struct SearchView: View {
                             .foregroundColor(.white)
                             .cornerRadius(12)
                     }
+                    
+
                 }
                 .padding()
 
@@ -67,8 +48,6 @@ struct SearchView: View {
                     .foregroundColor(.secondary)
                     .padding(.horizontal)
 
-
-                // 📋 Recipe List
                 if viewModel.filteredRecipes.isEmpty {
 
                     Spacer()
@@ -97,7 +76,6 @@ struct SearchView: View {
 
                             HStack(spacing: 12) {
 
-                                // 🍽 Image
                                 AsyncImage(url: URL(string: recipe.image)) { image in
                                     image
                                         .resizable()
@@ -109,7 +87,6 @@ struct SearchView: View {
                                 .clipped()
                                 .cornerRadius(12)
 
-                                // 📝 Info
                                 VStack(alignment: .leading, spacing: 6) {
 
                                     Text(recipe.name)
@@ -133,19 +110,17 @@ struct SearchView: View {
                 }
             }
             .navigationTitle("Search")
+            
+//            .toolbar {
+//                ToolbarItem(placement: .topBarLeading) {
+//                    Button {
+//                        selectedTab = 0
+//                    } label: {
+//                        Image(systemName: "chevron.left")
+//                    }
+//                }
+//            }
 
-            // ⬅️ Back Button
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        selectedTab = 0
-                    } label: {
-                        Image(systemName: "chevron.left")
-                    }
-                }
-            }
-
-            // 📦 FILTER SHEET (CORRECT POSITION)
             .sheet(isPresented: $showFilter) {
                 SortFilterView(filter: $viewModel.filter)
             }

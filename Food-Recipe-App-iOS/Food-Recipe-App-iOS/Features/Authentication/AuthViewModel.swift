@@ -100,10 +100,10 @@ final class AuthViewModel: ObservableObject {
             return "Special character is missing"
         }
         
-        return nil //  Password is strong
+        return nil
     }
 
-    // - Sign In
+   
     
     func signIn() async {
         isLoading = true
@@ -115,35 +115,29 @@ final class AuthViewModel: ObservableObject {
             await fetchUserProfile()
             isAuthenticated = true
         } catch {
-            // message for any login failure
+            
             errorMessage = "Incorrect credentials"
         }
 
         isLoading = false
     }
 
-    // MARK: - Sign Up (STRICT VALIDATION)
-    
+   
     func signUp() async {
         
-
-        // Reset messages
         errorMessage = nil
         successMessage = nil
 
-        //  Validate email
         guard isValidGmail(email) else {
             errorMessage = "Enter valid email id"
             return
         }
 
-        //  Validate password match
         guard password == confirmPassword else {
             errorMessage = "Passwords are not matching"
             return
         }
 
-        //  Validate password rules
         if let passwordError = passwordValidationError(password) {
             
 
@@ -151,7 +145,6 @@ final class AuthViewModel: ObservableObject {
             return
         }
 
-        //  Only reach here if ALL validations pass
         isLoading = true
 
         do {
@@ -168,19 +161,18 @@ final class AuthViewModel: ObservableObject {
             
             successMessage = "Sign up successful! You can now sign in."
 
-            // Clear fields after success
             email = ""
             password = ""
             confirmPassword = ""
         } catch {
-            //  Firebase failed
+            
             errorMessage = "Sign up failed"
         }
 
         isLoading = false
     }
 
-    // Sign Out
+    
     
     func signOut() {
         do {
@@ -191,7 +183,7 @@ final class AuthViewModel: ObservableObject {
         }
     }
 
-    // Password Reset
+   
     
     func sendPasswordReset(email: String) async throws {
         try await authService.sendPasswordReset(email: email)

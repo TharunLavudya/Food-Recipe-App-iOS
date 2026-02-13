@@ -5,6 +5,8 @@ struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel
     @Binding var selectedTab: Int
     @ObservedObject var authViewModel: AuthViewModel
+    @State private var navigateToSearchWithFilter = false
+
 
     init(
             repository: RecipeRepositoryProtocol,
@@ -67,29 +69,74 @@ extension HomeView {
                 .font(.largeTitle)
                 .foregroundColor(.green)
                 .onTapGesture {
-                        selectedTab = 3
+                        selectedTab = 4
                     }
         }
     }
 
+//    var searchSection: some View {
+//        HStack(spacing: 12) {
+//
+//            HStack {
+//                Image(systemName: "magnifyingglass")
+//                    .foregroundColor(.gray)
+//
+//                Text("Search recipes")
+//                    .foregroundColor(.gray)
+//
+//                Spacer()
+//            }
+//            .padding(.horizontal, 12)
+//            .frame(height: 44) // 👈 controlled height
+//            .background(Color(.systemGray6))
+//            .cornerRadius(12)
+//            .onTapGesture {
+//                selectedTab = 1
+//            }
+//
+//            Button {
+//                selectedTab = 1
+//            } label: {
+//                Image(systemName: "slider.horizontal.3")
+//                    .frame(width: 44, height: 44)
+//                    .background(Color.green)
+//                    .foregroundColor(.white)
+//                    .cornerRadius(12)
+//            }
+//        }
+//    }
+    
     var searchSection: some View {
-        HStack {
-            TextField("Search recipes", text: $viewModel.searchText)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
+        HStack(spacing: 12) {
 
-            Button {
-                // filter action
-            } label: {
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.gray)
+
+                Text("Search recipes")
+                    .foregroundColor(.gray)
+
+                Spacer()
+            }
+            .padding(.horizontal, 12)
+            .frame(height: 44)
+            .background(Color(.systemGray6))
+            .cornerRadius(12)
+            .onTapGesture {
+                selectedTab = 1
+            }
+
+            NavigationLink(destination: FilterView(filter: $viewModel.filter)) {
                 Image(systemName: "slider.horizontal.3")
-                    .padding()
+                    .frame(width: 44, height: 44)
                     .background(Color.green)
                     .foregroundColor(.white)
                     .cornerRadius(12)
             }
         }
     }
+
+
 
     var categorySection: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -185,4 +232,8 @@ extension HomeView {
         }
     }
 }
+
+
+
+
 

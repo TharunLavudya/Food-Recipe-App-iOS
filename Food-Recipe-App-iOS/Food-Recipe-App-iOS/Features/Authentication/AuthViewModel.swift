@@ -16,6 +16,10 @@ final class AuthViewModel: ObservableObject {
     @Published var successMessage: String?
     
     @Published var username: String = ""
+    @Published var signupUsername: String = ""
+    @Published var bio: String = ""
+    @Published var gender: String = ""
+
     
     private let authService: AuthService
     private let userService = UserService()
@@ -23,21 +27,46 @@ final class AuthViewModel: ObservableObject {
     init(authService: AuthService = FirebaseAuthService()) {
         self.authService = authService
         self.isAuthenticated = authService.getCurrentUserId() != nil
-        fetchUsername()
+        if isAuthenticated {
+                Task {
+                    await fetchUserProfile()
+                }
+            }
+
     }
-    
-    func fetchUsername() {
-        guard let email = Auth.auth().currentUser?.email else {
-            username = "User"
-            return
+    func fetchUserProfile() async {
+        do {
+            let profile = try await userService.fetchUserProfile()
+            self.username = profile.username
+            self.bio = profile.bio
+            self.gender = profile.gender
+        } catch {
+            print("Failed to fetch user profile:", error)
         }
+    }
+    func updateProfile(
+        newUsername: String,
+        newBio: String,
+        newGender: String
+    ) async {
 
-        let raw = email.split(separator: "@").first.map(String.init) ?? "User"
-        username = raw.capitalized
+        do {
+            try await userService.updateUserProfile(
+                username: newUsername,
+                bio: newBio,
+                gender: newGender
+            )
+
+            self.username = newUsername.capitalized
+            self.bio = newBio
+            self.gender = newGender
+
+        } catch {
+            errorMessage = "Profile update failed"
+        }
     }
 
     
-
     // Validation Helpers
     
     private func isValidGmail(_ email: String) -> Bool {
@@ -83,7 +112,7 @@ final class AuthViewModel: ObservableObject {
 
         do {
             try await authService.signIn(email: email, password: password)
-            fetchUsername()
+            await fetchUserProfile()
             isAuthenticated = true
         } catch {
             // message for any login failure
@@ -131,12 +160,12 @@ final class AuthViewModel: ObservableObject {
                 password: password
             )
             try await userService.createUserDocument(
-                username: email.components(separatedBy: "@").first ?? "User",
+                username: signupUsername,
                 email: email
             )
-
+            await fetchUserProfile()
             isAuthenticated = true
-
+            
             successMessage = "Sign up successful! You can now sign in."
 
             // Clear fields after success

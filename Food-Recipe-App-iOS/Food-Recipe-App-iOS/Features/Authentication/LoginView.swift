@@ -7,10 +7,10 @@ struct LoginView: View {
     @State private var resetEmail = ""
     @State private var resetMessage: String?
     
-    // Remember Me
+    
     @State private var rememberMe = false
     
-    // Eye toggle state
+   
     @State private var isPasswordVisible = false
 
     var body: some View {

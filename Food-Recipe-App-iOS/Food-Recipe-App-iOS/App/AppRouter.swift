@@ -70,27 +70,39 @@ struct MainTabView: View {
                     Text("Home")
                 }
                 .tag(0)
+            
+            
+            SearchView(
+                repository: environment.recipeRepository,
+                selectedTab: $selectedTab
+            )
+            .tabItem {
+                Image(systemName: "magnifyingglass")
+                Text("Search")
+            }
+            .tag(1)
 
             FavoritesView()
                 .tabItem {
                     Label("Favorites", systemImage: "heart.fill")
                 }
-                .tag(1)
+                .tag(2)
 
             AddRecipeView()
                 .tabItem {
                     Image(systemName: "plus.circle.fill")
                     Text("Add")
                 }
-                .tag(2)
+                .tag(3)
 
             ProfileView(authViewModel: authViewModel)
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("Profile")
                 }
-                .tag(3)
+                .tag(4)
         }
         .tint(.green)
     }
 }
+

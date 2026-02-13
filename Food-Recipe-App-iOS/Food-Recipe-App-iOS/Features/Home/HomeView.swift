@@ -6,6 +6,8 @@ struct HomeView: View {
     @Binding var selectedTab: Int
     @ObservedObject var authViewModel: AuthViewModel
     @EnvironmentObject var favoritesVM: FavoritesViewModel
+    @State private var navigateToSearchWithFilter = false
+
 
     init(
             repository: RecipeRepositoryProtocol,
@@ -56,34 +58,54 @@ extension HomeView {
             }
 
             Spacer()
-        
+
             Image(homeProfileImage)
                 .resizable()
                 .scaledToFill()
                 .frame(width: 36, height: 36)
                 .clipShape(Circle())
                 .contentShape(Circle())
+                .foregroundColor(.green)
+                .onTapGesture {
+                        selectedTab = 4
+                    }
         }
     }
 
     var searchSection: some View {
-        HStack {
-            TextField("Search recipes", text: $viewModel.searchText)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
+        HStack(spacing: 12) {
 
-            Button {
-                // filter action
-            } label: {
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.gray)
+
+                Text("Search recipes")
+                    .foregroundColor(.gray)
+
+                Spacer()
+            }
+            .padding(.horizontal, 12)
+            .frame(height: 44)
+            .background(Color(.systemGray6))
+            .cornerRadius(12)
+            .onTapGesture {
+                selectedTab = 1
+            }
+
+            NavigationLink(destination: FilterView(filter: $viewModel.filter)) {
                 Image(systemName: "slider.horizontal.3")
-                    .padding()
+                    .frame(width: 44, height: 44)
                     .background(Color.green)
                     .foregroundColor(.white)
                     .cornerRadius(12)
             }
+            
+            
+
         }
     }
+
+
 
     var categorySection: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -200,4 +222,8 @@ extension HomeView {
        }
    }
 }
+
+
+
+
 

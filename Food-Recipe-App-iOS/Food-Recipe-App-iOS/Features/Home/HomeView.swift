@@ -5,13 +5,15 @@ struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel
     @Binding var selectedTab: Int
     @ObservedObject var authViewModel: AuthViewModel
+    @EnvironmentObject var favoritesVM: FavoritesViewModel
     @State private var navigateToSearchWithFilter = false
 
 
     init(
             repository: RecipeRepositoryProtocol,
             selectedTab: Binding<Int>,
-            authViewModel: AuthViewModel
+            authViewModel: AuthViewModel,
+            
         ) {
             _viewModel = StateObject(
                 wrappedValue: HomeViewModel(repository: repository)
@@ -222,8 +224,19 @@ extension HomeView {
 
                             Spacer()
 
-                            Image(systemName: "bookmark")
+                            Button {
+                                Task {
+                                    await favoritesVM.toggle(recipe: recipe)
+                                }
+                            } label: {
+                                Image(systemName:
+                                        favoritesVM.isFavorite(recipe)
+                                        ? "heart.fill"
+                                        : "heart"
+                                )
                                 .foregroundColor(.green)
+                            }
+
                         }
                     }
                     .buttonStyle(.plain)                   
@@ -231,6 +244,16 @@ extension HomeView {
             }
         }
     }
+    var homeProfileImage: String {
+       switch authViewModel.gender {
+       case "Male":
+           return "male"
+       case "Female":
+           return "female"
+       default:
+           return "default"
+       }
+   }
 }
 
 

@@ -3,6 +3,14 @@ import SwiftUI
 struct AppRouter: View {
 
     @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var favoritesVM =
+            FavoritesViewModel(
+                repo: FavoritesRepository()
+            )
+    @StateObject private var homeVM =
+        HomeViewModel(
+            repository: AppEnvironment.shared.recipeRepository
+        )
     @State private var showSplash = true
 
     var body: some View {
@@ -13,14 +21,22 @@ struct AppRouter: View {
 
                 SplashView()
                     .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             showSplash = false
                         }
                     }
 
             } else if authViewModel.isAuthenticated {
 
-                MainTabView(authViewModel: authViewModel)
+                MainTabView(
+                    authViewModel: authViewModel
+                )
+                .environmentObject(favoritesVM)
+                .environmentObject(homeVM)
+                .task {
+                    await homeVM.loadRecipes()
+                }
+
 
             } else {
 
@@ -39,6 +55,7 @@ struct MainTabView: View {
     let environment = AppEnvironment.shared
     @State private var selectedTab = 0
     @ObservedObject var authViewModel: AuthViewModel
+    @EnvironmentObject var favoritesVM: FavoritesViewModel
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -65,10 +82,9 @@ struct MainTabView: View {
             }
             .tag(1)
 
-            FavouriteView()
+            FavoritesView()
                 .tabItem {
-                    Image(systemName: "bookmark.fill")
-                    Text("Favorites")
+                    Label("Favorites", systemImage: "heart.fill")
                 }
                 .tag(2)
 
@@ -79,7 +95,7 @@ struct MainTabView: View {
                 }
                 .tag(3)
 
-            ProfileView()
+            ProfileView(authViewModel: authViewModel)
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("Profile")

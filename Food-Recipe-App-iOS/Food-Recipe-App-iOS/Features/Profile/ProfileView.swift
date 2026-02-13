@@ -4,7 +4,8 @@ struct ProfileView: View {
     @State private var selectedSegment = 0
     @State private var recipeCount = 0
     @State private var showOptionsMenu = false  // Toggles the visibility of the options (ellipsis) menu
-    @ObservedObject var authViewModel = AuthViewModel()
+    @State private var showEditProfile = false
+    @ObservedObject var authViewModel : AuthViewModel
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -46,19 +47,17 @@ struct ProfileView: View {
             if showOptionsMenu {
                 VStack(alignment: .leading, spacing: 16) {
                     Button {
-                        print("Edit Details tapped")
+                        showEditProfile = true
                         withAnimation {
                             showOptionsMenu = false
                         }
                     } label: {
                         Label("Edit Details", systemImage: "pencil")
+                        
                     }
 
                     Button {
-                        print("Logout tapped")
-                        withAnimation {
-                            showOptionsMenu = false
-                        }
+                        authViewModel.signOut()
                     } label: {
                         Label("Logout", systemImage: "rectangle.portrait.and.arrow.right")
                     }
@@ -75,6 +74,15 @@ struct ProfileView: View {
                 .zIndex(10)
             }
         }
+        .task {
+            await viewModel.load()
+        }
+        .sheet(isPresented: $showEditProfile)
+        {
+            EditProfileView(authViewModel: authViewModel)
+        }
+
+
         .contentShape(Rectangle())
         // Dismiss options menu when tapping outside of it
         .onTapGesture {
@@ -88,7 +96,8 @@ struct ProfileView: View {
     private var profileHeader: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .top, spacing: 20) {
-                Image("female")
+            
+                Image(profileImage)
                     .resizable()
                     .scaledToFill()
                     .frame(width: 100, height: 100)
@@ -100,14 +109,14 @@ struct ProfileView: View {
                         .padding(.bottom, 5)
                         .padding(.top,10)
 
-                    Text("Private Chef \nPassionate about food info ")
+                    Text(authViewModel.bio)
                         .font(.subheadline)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: 120)
-            Text("Total recipes posted: \(recipeCount)")
+            Text("Total recipes posted: \(viewModel.recipes.count)")
         }
         .padding(.horizontal, 20)
     }
@@ -145,27 +154,58 @@ struct ProfileView: View {
     }
     // List of recipes posted by the user (Static for now)
     private var recipeList: some View {
-        VStack(spacing: 16) {
-            recipeCard(
-                title: "Traditional spare ribs baked",
-                duration: "20 min"
-            )
 
-            recipeCard(
-                title: "Jollof roasted chicken with flavored rice",
-                duration: "20 min"
-            )
+        VStack(spacing: 16) {
+
+            if viewModel.recipes.isEmpty {
+
+                Text("No recipes added yet")
+                    .font(.subheadline.weight(.medium))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(.green.opacity(0.15))
+                    .foregroundColor(.green)
+                    .frame(maxWidth: .infinity,alignment: .center)
+
+            } else {
+                ForEach(viewModel.recipes) { recipe in
+                    NavigationLink {
+                        RecipeDetailView(
+                            recipe: recipe,
+                            allRecipes: viewModel.recipes
+                        )
+                    }label: {
+                        recipeCard(
+                            title: recipe.name,
+                            duration: "\(recipe.cookTimeMinutes) min",
+                            imageURL: recipe.image
+                        ){
+                            Task {
+                                await viewModel.deleteRecipe(recipe)
+                            }
+                        }
+                    }
+                }
+
+            }
         }
     }
     //reusabale recipe card view used in recipelist
-    private func recipeCard(title: String, duration: String) -> some View {
+    private func recipeCard(title: String, duration: String,imageURL: String, onDelete: @escaping () -> Void ) -> some View {
         ZStack(alignment: .bottomLeading) {
-            Image("bg")
-                .resizable()
-                .scaledToFill()
-                .frame(height: 150)
-                .clipped()
-                .cornerRadius(16)
+            AsyncImage(url: URL(string: imageURL)) { image in
+                image
+                    .resizable()
+                    .scaledToFill()
+            } placeholder: {
+                Image("bg") // shown while loading
+                    .resizable()
+                    .scaledToFill()
+            }
+            .frame(height: 150)
+            .clipped()
+            .cornerRadius(16)
+
 
             VStack(alignment: .leading) {
                 Text(title)
@@ -177,6 +217,24 @@ struct ProfileView: View {
                     .foregroundColor(.white.opacity(0.8))
             }
             .padding()
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+
+                    Button {
+                        onDelete()
+                    } label: {
+                        Image(systemName: "trash.fill")
+                            .foregroundColor(.white)
+                            .padding(8)
+                            .background(Color.red)
+                            .clipShape(Circle())
+                    }
+                    .padding(10)
+                }
+            }
+
         }
         .background(
             LinearGradient(
@@ -234,9 +292,16 @@ struct ProfileView: View {
             CuisinePickerView(viewModel: viewModel)
         }
     }
-}
+    private var profileImage: String {
+        switch authViewModel.gender {
+        case "Male":
+            return "male"
+        case "Female":
+            return "female"
+        default:
+            return "default"
+        }
+    }
 
-#Preview {
-    ProfileView()
 }
 

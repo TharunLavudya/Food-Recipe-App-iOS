@@ -23,7 +23,7 @@ struct SignupView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             // Name
-            TextField("Name", text: $name)
+            TextField("Name", text: $viewModel.signupUsername)
                 .textInputAutocapitalization(.words)
                 .padding()
                 .background(Color(.systemGray6))
@@ -121,6 +121,12 @@ struct SignupView: View {
         }
         .padding()
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+                    viewModel.email = ""
+                    viewModel.password = ""
+                    viewModel.confirmPassword = ""
+                    viewModel.signupUsername = ""
+                }
     }
 }
 

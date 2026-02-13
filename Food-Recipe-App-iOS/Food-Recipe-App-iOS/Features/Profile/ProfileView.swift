@@ -177,7 +177,8 @@ struct ProfileView: View {
                     }label: {
                         recipeCard(
                             title: recipe.name,
-                            duration: "\(recipe.cookTimeMinutes) min"
+                            duration: "\(recipe.cookTimeMinutes) min",
+                            imageURL: recipe.image
                         ){
                             Task {
                                 await viewModel.deleteRecipe(recipe)
@@ -190,14 +191,21 @@ struct ProfileView: View {
         }
     }
     //reusabale recipe card view used in recipelist
-    private func recipeCard(title: String, duration: String, onDelete: @escaping () -> Void ) -> some View {
+    private func recipeCard(title: String, duration: String,imageURL: String, onDelete: @escaping () -> Void ) -> some View {
         ZStack(alignment: .bottomLeading) {
-            Image("bg")
-                .resizable()
-                .scaledToFill()
-                .frame(height: 150)
-                .clipped()
-                .cornerRadius(16)
+            AsyncImage(url: URL(string: imageURL)) { image in
+                image
+                    .resizable()
+                    .scaledToFill()
+            } placeholder: {
+                Image("bg") // shown while loading
+                    .resizable()
+                    .scaledToFill()
+            }
+            .frame(height: 150)
+            .clipped()
+            .cornerRadius(16)
+
 
             VStack(alignment: .leading) {
                 Text(title)
@@ -295,9 +303,5 @@ struct ProfileView: View {
         }
     }
 
-}
-
-#Preview {
-    ProfileView(authViewModel: AuthViewModel())
 }
 

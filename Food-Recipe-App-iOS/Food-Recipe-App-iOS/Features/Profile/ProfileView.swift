@@ -5,6 +5,7 @@ struct ProfileView: View {
     @State private var recipeCount = 0
     @State private var showOptionsMenu = false  // Toggles the visibility of the options (ellipsis) menu
     @State private var showEditProfile = false
+    @State private var selectedRecipeForEdit: Recipe?
     @ObservedObject var authViewModel : AuthViewModel
 
     var body: some View {
@@ -42,6 +43,17 @@ struct ProfileView: View {
                         }
                     }
                 }
+                .navigationDestination(item: $selectedRecipeForEdit) { recipe in
+                    EditRecipeView(
+                        viewModel: EditRecipeViewModel(recipe: recipe),
+                        onUpdate: {
+                            Task {
+                                await viewModel.load()
+                            }
+                        }
+                    )
+                }
+
             }
             // Floating options menu shown when ellipsis is tapped
             if showOptionsMenu {
@@ -176,24 +188,25 @@ struct ProfileView: View {
                         )
                     }label: {
                         recipeCard(
-                            title: recipe.name,
-                            duration: "\(recipe.cookTimeMinutes) min",
-                            imageURL: recipe.image
-                        ){
-                            Task {
-                                await viewModel.deleteRecipe(recipe)
-                            }
+                            recipe : recipe,
+                            onDelete: {
+                                Task {
+                                    await viewModel.deleteRecipe(recipe)
+                                }
+                            },onEdit: {
+                                    selectedRecipeForEdit = recipe
+                                }
+                            )
                         }
                     }
                 }
 
             }
-        }
     }
     //reusabale recipe card view used in recipelist
-    private func recipeCard(title: String, duration: String,imageURL: String, onDelete: @escaping () -> Void ) -> some View {
+    private func recipeCard(recipe: Recipe ,onDelete: @escaping () -> Void, onEdit: @escaping () -> Void ) -> some View {
         ZStack(alignment: .bottomLeading) {
-            AsyncImage(url: URL(string: imageURL)) { image in
+            AsyncImage(url: URL(string: recipe.image)) { image in
                 image
                     .resizable()
                     .scaledToFill()
@@ -205,14 +218,18 @@ struct ProfileView: View {
             .frame(height: 150)
             .clipped()
             .cornerRadius(16)
-
+            LinearGradient(
+                colors: [.black.opacity(0.9), .clear],
+                startPoint: .bottom,
+                endPoint: .top
+            )
 
             VStack(alignment: .leading) {
-                Text(title)
+                Text(recipe.name)
                     .font(.headline)
                     .foregroundColor(.white)
 
-                Text(duration)
+                Text("\(recipe.cookTimeMinutes) min ")
                     .font(.caption)
                     .foregroundColor(.white.opacity(0.8))
             }
@@ -221,7 +238,15 @@ struct ProfileView: View {
                 Spacer()
                 HStack {
                     Spacer()
-
+                    Button{
+                        onEdit()
+                    } label: {
+                        Image(systemName: "pencil")
+                            .foregroundColor(.white)
+                            .padding(8)
+                            .background(Color.blue)
+                            .clipShape(Circle())
+                    }
                     Button {
                         onDelete()
                     } label: {
@@ -236,13 +261,14 @@ struct ProfileView: View {
             }
 
         }
-        .background(
-            LinearGradient(
-                colors: [.black.opacity(0.9), .clear],
-                startPoint: .bottom,
-                endPoint: .top
-            )
-        )
+//        .background(
+//            LinearGradient(
+//                colors: [.black.opacity(0.9), .clear],
+//                
+//                startPoint: .bottom,
+//                endPoint: .top
+//            )
+//        )
         .cornerRadius(16)
     }
 

@@ -1,4 +1,13 @@
+//
+//  EditRecipeViewModel.swift
+//  Food-Recipe-App-iOS
+//
+//  Created by rentamac on 2/13/26.
+//
+
+
 import Foundation
+import Combine
 
 @MainActor
 final class EditRecipeViewModel: ObservableObject {
@@ -44,4 +53,22 @@ final class EditRecipeViewModel: ObservableObject {
 
         try await service.updateRecipe(recipe: updatedRecipe)
     }
+    func addIngredient() {
+        ingredients.append("")
+    }
+
+    func removeIngredient(at index: Int) {
+        guard ingredients.count > 1 else { return }
+        ingredients.remove(at: index)
+    }
+
+    func addInstruction() {
+        instructions.append("")
+    }
+
+    func removeInstruction(at index: Int) {
+        guard instructions.count > 1 else { return }
+        instructions.remove(at: index)
+    }
+
 }

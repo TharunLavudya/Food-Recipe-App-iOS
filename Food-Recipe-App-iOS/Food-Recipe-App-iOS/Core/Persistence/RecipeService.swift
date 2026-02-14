@@ -106,6 +106,29 @@ extension RecipeService {
                 .document(String(recipeId))
                 .delete()
         }
+        func updateRecipe(recipe: Recipe) async throws {
+            
+            guard let uid = Auth.auth().currentUser?.uid else { return }
+
+            try await db
+                .collection("users")
+                .document(uid)
+                .collection("recipes")
+                .document(String(recipe.id))
+                .updateData([
+                    "name": recipe.name,
+                    "ingredients": recipe.ingredients,
+                    "instructions": recipe.instructions,
+                    "cookTimeMinutes": recipe.cookTimeMinutes,
+                    "difficulty": recipe.difficulty,
+                    "cuisine": recipe.cuisine,
+                    "image": recipe.image,
+                    "rating": recipe.rating,
+                    "reviewCount": recipe.reviewCount,
+                    "mealType": recipe.mealType
+                ])
+        }
+
 }
 
 

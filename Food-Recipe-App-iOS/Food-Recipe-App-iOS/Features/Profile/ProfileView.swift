@@ -218,7 +218,11 @@ struct ProfileView: View {
             .frame(height: 150)
             .clipped()
             .cornerRadius(16)
-
+            LinearGradient(
+                colors: [.black.opacity(0.9), .clear],
+                startPoint: .bottom,
+                endPoint: .top
+            )
 
             VStack(alignment: .leading) {
                 Text(recipe.name)
@@ -257,13 +261,14 @@ struct ProfileView: View {
             }
 
         }
-        .background(
-            LinearGradient(
-                colors: [.black.opacity(0.9), .clear],
-                startPoint: .bottom,
-                endPoint: .top
-            )
-        )
+//        .background(
+//            LinearGradient(
+//                colors: [.black.opacity(0.9), .clear],
+//                
+//                startPoint: .bottom,
+//                endPoint: .top
+//            )
+//        )
         .cornerRadius(16)
     }
 

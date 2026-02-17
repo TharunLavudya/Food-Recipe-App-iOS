@@ -1,35 +1,30 @@
-//
-//  FilterView.swift
-//  Food-Recipe-App-iOS
-//
-//  Created by rentamac on 2/12/26.
-//
-
 import SwiftUI
 
 struct FilterView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Binding var filter: RecipeFilter
+    let cuisineOptions: [String]
 
     @State private var selectedCookTimes: Set<String> = []
     @State private var selectedRatings: Set<String> = []
-    @State private var selectedServings: Set<String> = []
     @State private var selectedCuisines: Set<String> = []
-    @State private var selectedCalories: Set<String> = []
+    @State private var selectedMealTypes: Set<String> = []
+    @State private var selectedDifficulties: Set<String> = []
 
-    let cookTimeOptions = [
-        "0-5": 0...5,
-        "5-10": 5...10,
-        "10-15": 10...15,
-        "15-30": 15...30
-    ]
-
-    let servingsOptions = [
-        "1-2": 1...2,
-        "3-4": 3...4,
-        "5+": 5...20
-    ]
+//    let cookTimeOptions = [
+//        "0-5": 0...5,
+//        "5-10": 5...10,
+//        "10-15": 10...15,
+//        "15-30": 15...30
+//    ]
+    
+    private let cookTimeOrder = ["0-10", "10-20", "20-30+"]
+        private let cookTimeOptions: [String: ClosedRange<Int>] = [
+            "0-10": 0...10,
+            "10-20": 10...20,
+            "20-30+": 20...1000
+        ]
 
     let ratingOptions = [
         "3+": 3.0,
@@ -37,58 +32,41 @@ struct FilterView: View {
         "4.5+": 4.5
     ]
 
-    let calorieOptions = [
-        "0-200": 0...200,
-        "200-400": 200...400,
-        "400+": 400...2000
+    let mealTypeOptions = [
+        "Breakfast", "Lunch", "Dinner", "Snack", "Dessert"
     ]
 
-    let cuisineOptions = [
-        "Italian", "Indian", "Mexican", "Chinese", "American"
+    let difficultyOptions = [
+        "Easy", "Medium", "Hard"
     ]
 
     var body: some View {
         VStack(spacing: 24) {
-
-            Text("Filters")
+            Text("Filter Recipes")
                 .font(.largeTitle)
                 .bold()
                 .padding(.top, 20)
 
             ScrollView {
                 VStack(spacing: 24) {
-
-                    multiSelectChips(title: "Cooking Time",
-                                     options: Array(cookTimeOptions.keys),
-                                     selected: $selectedCookTimes)
-
-                    multiSelectChips(title: "Servings",
-                                     options: Array(servingsOptions.keys),
-                                     selected: $selectedServings)
-
-                    multiSelectChips(title: "Rating",
-                                     options: Array(ratingOptions.keys),
-                                     selected: $selectedRatings)
-
-                    multiSelectChips(title: "Calories",
-                                     options: Array(calorieOptions.keys),
-                                     selected: $selectedCalories)
-
-                    multiSelectChips(title: "Cuisine",
-                                     options: cuisineOptions,
-                                     selected: $selectedCuisines)
+                    
+                    
+                    multiSelectChips(title: "Meal Type", options: mealTypeOptions, selected: $selectedMealTypes)
+                    multiSelectChips(title: "Difficulty", options: difficultyOptions, selected: $selectedDifficulties)
+                    multiSelectChips(title: "Cooking Time", options: cookTimeOrder, selected: $selectedCookTimes)
+                    multiSelectChips(title: "Rating", options: Array(ratingOptions.keys), selected: $selectedRatings)
+                    multiSelectChips(title: "Cuisine", options: cuisineOptions, selected: $selectedCuisines)
+                    
                 }
                 .padding(.horizontal)
             }
 
             HStack(spacing: 16) {
-                Button("Reset") {
-                    resetFilters()
-                }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(12)
+                Button("Reset") { resetFilters() }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(12)
 
                 Button("Apply") {
                     applyFilters()
@@ -103,29 +81,23 @@ struct FilterView: View {
             .padding()
         }
         .onAppear {
-            // Load current filter selections
             selectedCookTimes = Set(filter.cookTimeRanges.compactMap { range in
-                cookTimeOptions.first { $0.value == range }?.key
-            })
-            selectedServings = Set(filter.servingsRanges.compactMap { range in
-                servingsOptions.first { $0.value == range }?.key
+                cookTimeOptions.first(where: { $0.value == range })?.key
             })
             selectedRatings = Set(filter.minRatings.compactMap { rating in
-                ratingOptions.first { $0.value == rating }?.key
-            })
-            selectedCalories = Set(filter.calorieRanges.compactMap { range in
-                calorieOptions.first { $0.value == range }?.key
+                ratingOptions.first(where: { $0.value == rating })?.key
             })
             selectedCuisines = Set(filter.cuisines)
+            selectedMealTypes = Set(filter.mealTypes)
+            selectedDifficulties = Set(filter.difficultyLevels)
         }
     }
 
     private func multiSelectChips(title: String, options: [String], selected: Binding<Set<String>>) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.headline)
+            Text(title).font(.headline)
 
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 80), spacing: 8)], spacing: 8) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 90), spacing: 8)], spacing: 8) {
                 ForEach(options, id: \.self) { option in
                     Button {
                         if selected.wrappedValue.contains(option) {
@@ -148,18 +120,18 @@ struct FilterView: View {
 
     private func applyFilters() {
         filter.cookTimeRanges = selectedCookTimes.compactMap { cookTimeOptions[$0] }
-        filter.servingsRanges = selectedServings.compactMap { servingsOptions[$0] }
         filter.minRatings = selectedRatings.compactMap { ratingOptions[$0] }
-        filter.calorieRanges = selectedCalories.compactMap { calorieOptions[$0] }
         filter.cuisines = Array(selectedCuisines)
+        filter.mealTypes = Array(selectedMealTypes)
+        filter.difficultyLevels = Array(selectedDifficulties)
     }
 
     private func resetFilters() {
         filter = .empty
         selectedCookTimes.removeAll()
-        selectedServings.removeAll()
         selectedRatings.removeAll()
-        selectedCalories.removeAll()
         selectedCuisines.removeAll()
+        selectedMealTypes.removeAll()
+        selectedDifficulties.removeAll()
     }
 }

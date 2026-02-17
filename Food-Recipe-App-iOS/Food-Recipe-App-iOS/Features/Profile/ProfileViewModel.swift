@@ -14,6 +14,8 @@ final class ProfileViewModel: ObservableObject {
     private let service = RecipeService()
     private let repository: RecipeRepositoryProtocol
     
+    private let userService = UserService()
+    
     init(repository: RecipeRepositoryProtocol =
          RecipeRepository(networking: HttpNetworking())) {
         self.repository = repository
@@ -37,6 +39,10 @@ final class ProfileViewModel: ObservableObject {
         } else {
             selectedCuisines.append(cuisine)
         }
+        
+        Task {
+               await saveInterestsToFirestore()
+           }
     }
     func deleteRecipe(_ recipe: Recipe) async {
 
@@ -47,6 +53,30 @@ final class ProfileViewModel: ObservableObject {
             print("Delete failed:", error)
         }
     }
+    
+    func saveInterestsToFirestore() async {
+        do {
+            try await userService.updateInterests(
+                selectedCuisines.map { $0.name }
+            )
+        } catch {
+            print("Failed to save interests:", error)
+        }
+    }
+
+    func loadUserInterests() async {
+        do {
+            let interests = try await userService.fetchUserInterests()
+            
+            selectedCuisines = allCuisines.filter {
+                interests.contains($0.name)
+            }
+            
+        } catch {
+            print("Failed to load interests:", error)
+        }
+    }
+
 
     
     func load() async {

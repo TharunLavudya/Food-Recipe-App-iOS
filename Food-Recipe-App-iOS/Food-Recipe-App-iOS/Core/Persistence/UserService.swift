@@ -30,6 +30,7 @@ final class UserService {
                 "email": email,
                 "bio": "",
                 "gender": "Male",
+                "interests": [],
                 "createdAt": Timestamp()
             ])
     }
@@ -75,5 +76,35 @@ final class UserService {
                 "gender": gender
             ], merge: true)
     }
+    
+    func fetchUserInterests() async throws -> [String] {
+
+        guard let uid = Auth.auth().currentUser?.uid else {
+            throw URLError(.badURL)
+        }
+
+        let snapshot = try await db
+            .collection("users")
+            .document(uid)
+            .getDocument()
+
+        let data = snapshot.data()
+        return data?["interests"] as? [String] ?? []
+    }
+
+    func updateInterests(_ interests: [String]) async throws {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+            throw URLError(.badURL)
+        }
+
+        try await db
+            .collection("users")
+            .document(uid)
+            .setData([
+                "interests": interests
+            ], merge: true)
+    }
+
 
 }

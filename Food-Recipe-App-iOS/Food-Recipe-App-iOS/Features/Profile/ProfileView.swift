@@ -89,6 +89,8 @@ struct ProfileView: View {
         }
         .task {
             await viewModel.load()
+            await viewModel.fetchCuisines()
+            await viewModel.loadUserInterests()
         }
         .sheet(isPresented: $showEditProfile)
         {

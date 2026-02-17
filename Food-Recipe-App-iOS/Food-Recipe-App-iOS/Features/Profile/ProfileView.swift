@@ -28,7 +28,7 @@ struct ProfileView: View {
                     .padding(.bottom)
                     .id(selectedSegment)
                 }
-                .navigationTitle("Profile")
+                .navigationTitle("Profile").bold()
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -38,7 +38,8 @@ struct ProfileView: View {
                             }
                         } label: {
                             Image(systemName: "ellipsis")
-                                .rotationEffect(.degrees(90))
+                                .font(.system(size: 18, weight: .regular))
+//                                .rotationEffect(.degrees(90))
                                 .padding(8)
                         }
                     }
@@ -88,6 +89,8 @@ struct ProfileView: View {
         }
         .task {
             await viewModel.load()
+            await viewModel.fetchCuisines()
+            await viewModel.loadUserInterests()
         }
         .sheet(isPresented: $showEditProfile)
         {
@@ -244,7 +247,8 @@ struct ProfileView: View {
                         Image(systemName: "pencil")
                             .foregroundColor(.white)
                             .padding(8)
-                            .background(Color.blue)
+//                            .background(Color.blue)
+                            .background(.green.opacity(0.6))
                             .clipShape(Circle())
                     }
                     Button {
@@ -253,22 +257,14 @@ struct ProfileView: View {
                         Image(systemName: "trash.fill")
                             .foregroundColor(.white)
                             .padding(8)
-                            .background(Color.red)
+//                            .background(Color.red)
+                            .background(.red.opacity(0.6))
                             .clipShape(Circle())
                     }
                     .padding(10)
                 }
             }
-
         }
-//        .background(
-//            LinearGradient(
-//                colors: [.black.opacity(0.9), .clear],
-//                
-//                startPoint: .bottom,
-//                endPoint: .top
-//            )
-//        )
         .cornerRadius(16)
     }
 

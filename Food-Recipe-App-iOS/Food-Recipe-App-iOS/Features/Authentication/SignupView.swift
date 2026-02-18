@@ -6,6 +6,7 @@ struct SignupView: View {
     @State private var name: String = ""
     @State private var acceptTerms: Bool = false
 
+    // Eye toggle states
     @State private var isPasswordVisible = false
     @State private var isConfirmPasswordVisible = false
 
@@ -21,7 +22,9 @@ struct SignupView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            TextField("Name", text: $name)
+            // Name
+            TextField("Name", text: $viewModel.signupUsername)
+                .textInputAutocapitalization(.words)
                 .padding()
                 .background(Color(.systemGray6))
                 .cornerRadius(10)
@@ -32,53 +35,70 @@ struct SignupView: View {
                 .autocorrectionDisabled()
                 .padding()
                 .background(Color(.systemGray6))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(viewModel.emailError == nil ? Color.clear : Color.red, lineWidth: 1)
-                )
                 .cornerRadius(10)
-                .onChange(of: viewModel.email) { _ in
-                    if viewModel.isValidGmail(viewModel.email) {
-                        viewModel.emailError = nil
-                    }
+
+            //  Password with eye toggle
+            HStack {
+                if isPasswordVisible {
+                    TextField("Password", text: $viewModel.password)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                } else {
+                    SecureField("Password", text: $viewModel.password)
                 }
 
-            if let emailError = viewModel.emailError {
-                Text(emailError).foregroundColor(.red).font(.footnote)
+                Button {
+                    isPasswordVisible.toggle()
+                } label: {
+                    Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
+                        .foregroundColor(.gray)
+                }
             }
+            .padding()
+            .background(Color(.systemGray6))
+            .cornerRadius(10)
 
-            // Password
-            passwordField(
-                title: "Password",
-                text: $viewModel.password,
-                isVisible: $isPasswordVisible
-            )
+            //  Confirm Password with eye toggle
+            HStack {
+                if isConfirmPasswordVisible {
+                    TextField("Confirm Password", text: $viewModel.confirmPassword)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                } else {
+                    SecureField("Confirm Password", text: $viewModel.confirmPassword)
+                }
 
-            passwordStrengthView()
-
-            if let passwordError = viewModel.passwordError {
-                Text(passwordError).foregroundColor(.red).font(.footnote)
+                Button {
+                    isConfirmPasswordVisible.toggle()
+                } label: {
+                    Image(systemName: isConfirmPasswordVisible ? "eye.slash" : "eye")
+                        .foregroundColor(.gray)
+                }
             }
+            .padding()
+            .background(Color(.systemGray6))
+            .cornerRadius(10)
 
-            // Confirm Password
-            passwordField(
-                title: "Confirm Password",
-                text: $viewModel.confirmPassword,
-                isVisible: $isConfirmPasswordVisible
-            )
-
-            if let confirmError = viewModel.confirmPasswordError {
-                Text(confirmError).foregroundColor(.red).font(.footnote)
+            // Error message
+            if let error = viewModel.errorMessage {
+                Text(error)
+                    .foregroundColor(.red)
+                    .font(.footnote)
             }
-
             if let success = viewModel.successMessage {
-                Text(success).foregroundColor(.green).font(.footnote)
+                Text(success)
+                    .foregroundColor(.green)
+                    .font(.footnote)
             }
 
+
+            // Accept terms
             Toggle(isOn: $acceptTerms) {
-                Text("I accept terms & conditions").font(.footnote)
+                Text("I accept terms & conditions")
+                    .font(.footnote)
             }
 
+            // Sign Up button
             Button {
                 Task { await viewModel.signUp() }
             } label: {
@@ -90,73 +110,22 @@ struct SignupView: View {
                     .cornerRadius(12)
             }
             .disabled(!acceptTerms)
-
             NavigationLink {
-                LoginView(viewModel: AuthViewModel())
+                LoginView(viewModel: viewModel)
             } label: {
                 Text("Already have an account? Sign In")
                     .font(.footnote)
                     .foregroundColor(.gray)
             }
-
             Spacer()
         }
         .padding()
-    }
-
-    // Components
-
-    func passwordField(title: String, text: Binding<String>, isVisible: Binding<Bool>) -> some View {
-        HStack {
-            if isVisible.wrappedValue {
-                TextField(title, text: text)
-            } else {
-                SecureField(title, text: text)
-            }
-
-            Button {
-                isVisible.wrappedValue.toggle()
-            } label: {
-                Image(systemName: isVisible.wrappedValue ? "eye.slash" : "eye")
-                    .foregroundColor(.gray)
-            }
-        }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(10)
-    }
-
-    func passwordStrengthView() -> some View {
-        let strength = viewModel.passwordStrength(viewModel.password)
-
-        let (text, color): (String, Color) = {
-            switch strength {
-            case .weak: return ("Weak", .red)
-            case .medium: return ("Medium", .orange)
-            case .strong: return ("Strong", .green)
-            }
-        }()
-
-        return VStack(alignment: .leading, spacing: 4) {
-            Text("Strength: \(text)")
-                .foregroundColor(color)
-                .font(.footnote)
-
-            let checks = viewModel.checkPassword(viewModel.password)
-
-            ruleRow("Uppercase", checks.hasUppercase)
-            ruleRow("Lowercase", checks.hasLowercase)
-            ruleRow("Number", checks.hasNumber)
-            ruleRow("Special character", checks.hasSpecial)
-            ruleRow("At least 7 characters", checks.hasMinLength)
-        }
-    }
-
-    func ruleRow(_ title: String, _ ok: Bool) -> some View {
-        HStack {
-            Image(systemName: ok ? "checkmark.circle.fill" : "xmark.circle.fill")
-                .foregroundColor(ok ? .green : .red)
-            Text(title).font(.footnote)
-        }
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+                    viewModel.email = ""
+                    viewModel.password = ""
+                    viewModel.confirmPassword = ""
+                    viewModel.signupUsername = ""
+                }
     }
 }

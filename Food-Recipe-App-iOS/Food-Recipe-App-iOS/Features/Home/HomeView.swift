@@ -257,8 +257,9 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     headerSection
                     searchSection
-                    categorySection
+//                    categorySection
                     popularRecipesSection
+                    interestRecipesSection
                     newRecipesSection
                 }
                 .padding()
@@ -330,31 +331,31 @@ extension HomeView {
         }
     }
 
-    var categorySection: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                ForEach(viewModel.categories, id: \.self) { category in
-                    Text(category)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(
-                            viewModel.selectedCategory == category
-                            ? Color.green
-                            : Color(.systemGray6)
-                        )
-                        .foregroundColor(
-                            viewModel.selectedCategory == category
-                            ? .white
-                            : .primary
-                        )
-                        .cornerRadius(20)
-                        .onTapGesture {
-                            viewModel.selectedCategory = category
-                        }
-                }
-            }
-        }
-    }
+//    var categorySection: some View {
+//        ScrollView(.horizontal, showsIndicators: false) {
+//            HStack(spacing: 12) {
+//                ForEach(viewModel.categories, id: \.self) { category in
+//                    Text(category)
+//                        .padding(.horizontal, 16)
+//                        .padding(.vertical, 8)
+//                        .background(
+//                            viewModel.selectedCategory == category
+//                            ? Color.green
+//                            : Color(.systemGray6)
+//                        )
+//                        .foregroundColor(
+//                            viewModel.selectedCategory == category
+//                            ? .white
+//                            : .primary
+//                        )
+//                        .cornerRadius(20)
+//                        .onTapGesture {
+//                            viewModel.selectedCategory = category
+//                        }
+//                }
+//            }
+//        }
+//    }
 
     var popularRecipesSection: some View {
         VStack(alignment: .leading) {
@@ -363,7 +364,7 @@ extension HomeView {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
-                    ForEach(viewModel.filteredRecipes.prefix(10)) { recipe in
+                    ForEach(viewModel.popularRecipes.prefix(10)) { recipe in
                         NavigationLink {
                             RecipeDetailView(
                                 recipe: recipe,
@@ -378,6 +379,37 @@ extension HomeView {
             }
         }
     }
+    
+    var interestRecipesSection: some View {
+
+        Group {
+            if !viewModel.interestRecipes.isEmpty {
+
+                VStack(alignment: .leading) {
+                    Text("Based on Your Interests")
+                        .font(.headline)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 16) {
+                            ForEach(
+                                viewModel.interestRecipes.prefix(10)
+                            ) { recipe in
+                                NavigationLink {
+                                    RecipeDetailView(
+                                        recipe: recipe,
+                                        allRecipes: viewModel.recipes
+                                    )
+                                } label: {
+                                    RecipeRowView(recipe: recipe)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     var newRecipesSection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -385,7 +417,7 @@ extension HomeView {
                 .font(.headline)
 
             LazyVStack(spacing: 16) {
-                ForEach(viewModel.filteredRecipes.prefix(10)) { recipe in
+                ForEach(viewModel.newRecipes.prefix(10)) { recipe in
                     NavigationLink {
                         RecipeDetailView(
                             recipe: recipe,
@@ -396,7 +428,8 @@ extension HomeView {
                             AsyncImage(url: URL(string: recipe.image)) { image in
                                 image.resizable()
                             } placeholder: {
-                                Color.gray.opacity(0.3)
+                                //Color.gray.opacity(0.3)
+                                Image("AppLogo")
                             }
                             .frame(width: 80, height: 80)
                             .cornerRadius(12)

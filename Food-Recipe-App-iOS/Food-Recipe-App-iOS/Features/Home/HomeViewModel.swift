@@ -80,6 +80,8 @@
 
 import Combine
 import Foundation
+import FirebaseAuth
+
 
 @MainActor
 final class HomeViewModel: ObservableObject {
@@ -93,6 +95,11 @@ final class HomeViewModel: ObservableObject {
     @Published var filter: RecipeFilter = .empty
 
     private let repository: RecipeRepositoryProtocol
+    
+    private let userService = UserService()
+    @Published var userInterests: [String] = []
+    @Published var interestRecipes: [Recipe] = []
+
 
     init(repository: RecipeRepositoryProtocol) {
         self.repository = repository
@@ -103,10 +110,26 @@ final class HomeViewModel: ObservableObject {
             recipes = try await repository.fetchRecipes()
             setupCategories()
             setupCuisines()
+            
+            userInterests = try await userService.fetchUserInterests()
+            filterInterestRecipes()
         } catch {
             print("Failed to load recipes:", error)
         }
     }
+    
+    private func filterInterestRecipes() {
+
+        guard !userInterests.isEmpty else {
+            interestRecipes = []
+            return
+        }
+
+        interestRecipes = recipes.filter {
+                userInterests.contains($0.cuisine)
+            }
+    }
+
     
     private func setupCategories() {
         let cuisines = recipes.map { $0.cuisine }
@@ -121,10 +144,25 @@ final class HomeViewModel: ObservableObject {
     }
     
     
+    // Popular Recipes
+    var popularRecipes: [Recipe] {
+        filteredRecipes
+            .sorted {
+                $0.rating > $1.rating
+            }
+    }
+    
+    // New Recipes
+    var newRecipes: [Recipe] {
+        filteredRecipes
+            .sorted {
+                $0.id > $1.id  
+            }
+    }
+
+
     
     var filteredRecipes: [Recipe] {
-        
-        
         
         recipes.filter { recipe in
 

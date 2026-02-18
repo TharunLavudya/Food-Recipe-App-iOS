@@ -73,7 +73,7 @@ struct LoginView: View {
                 Text("Caps Lock is ON").foregroundColor(.orange).font(.footnote)
             }
 
-            // Remember Me + Forgot Password Row (LIKE YOUR REFERENCE)
+            // Remember Me + Forgot Password Row
             HStack {
                 Toggle("Remember Me", isOn: $rememberMe)
                     .font(.footnote)
@@ -97,7 +97,7 @@ struct LoginView: View {
                 Task {
                     await viewModel.signIn()
 
-                    // ✅ Remember Me logic (FROM YOUR REFERENCE)
+                    //  Remember Me logic 
                     if rememberMe {
                         UserDefaults.standard.set(viewModel.email, forKey: "savedEmail")
                         UserDefaults.standard.set(viewModel.password, forKey: "savedPassword")
@@ -128,7 +128,7 @@ struct LoginView: View {
         .padding()
         .navigationBarHidden(true)
 
-        // ✅ Load saved credentials EXACTLY like your reference
+        // Load saved credentials 
         .onAppear {
             if let savedEmail = UserDefaults.standard.string(forKey: "savedEmail"),
                let savedPassword = UserDefaults.standard.string(forKey: "savedPassword") {

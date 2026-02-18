@@ -5,6 +5,7 @@ struct SearchView: View {
     @StateObject private var viewModel: SearchViewModel
     @Binding var selectedTab: Int
     @State private var showFilter = false
+    
 
     init(
         repository: RecipeRepositoryProtocol,
@@ -30,7 +31,12 @@ struct SearchView: View {
                         .background(Color(.systemGray6))
                         .cornerRadius(12)
 
-                    NavigationLink(destination: FilterView(filter: $viewModel.filter)) {
+                    NavigationLink(
+                        destination: FilterView(
+                            filter: $viewModel.filter,
+                            cuisineOptions: viewModel.allCuisines
+                        )
+                    ) {
                         Image(systemName: "slider.horizontal.3")
                             .frame(width: 44, height: 44)
                             .background(Color.green)
@@ -122,7 +128,10 @@ struct SearchView: View {
 //            }
 
             .sheet(isPresented: $showFilter) {
-                SortFilterView(filter: $viewModel.filter)
+                SortFilterView(
+                    filter: $viewModel.filter,
+                    cuisineOptions: viewModel.allCuisines
+                )
             }
 
             .task {

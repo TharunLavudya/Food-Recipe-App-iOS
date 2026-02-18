@@ -10,7 +10,7 @@ final class AuthViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var confirmPassword: String = ""
 
-    // Profile Fields (required by EditProfileView)
+    // Profile Fields 
     @Published var username: String = ""
     @Published var bio: String = ""
     @Published var gender: String = "Male"
@@ -162,7 +162,7 @@ final class AuthViewModel: ObservableObject {
         isLoading = false
     }
 
-    //  Profile Update (REQUIRED by EditProfileView)
+    //  Profile Update 
 
     func updateProfile(newUsername: String, newBio: String, newGender: String) async {
         // For now just update locally (can connect to Firebase later)

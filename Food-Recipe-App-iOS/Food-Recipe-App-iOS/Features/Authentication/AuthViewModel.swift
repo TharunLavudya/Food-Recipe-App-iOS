@@ -40,7 +40,7 @@ final class AuthViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Profile
+    //  Profile
 
     func fetchUserProfile() async {
         do {
@@ -68,7 +68,7 @@ final class AuthViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Validation
+    //  Validation
 
     func isValidGmail(_ email: String) -> Bool {
         let pattern = #"^[A-Z0-9a-z._%+-]+@gmail\.com$"#
@@ -129,7 +129,7 @@ final class AuthViewModel: ObservableObject {
         successMessage = nil
     }
 
-    // MARK: - Sign In
+    //  Sign In
 
     func signIn() async {
         clearErrors()
@@ -152,7 +152,7 @@ final class AuthViewModel: ObservableObject {
         isLoading = false
     }
 
-    // MARK: - Sign Up
+    //  Sign Up
 
     func signUp() async {
         clearErrors()
@@ -200,13 +200,13 @@ final class AuthViewModel: ObservableObject {
         isLoading = false
     }
 
-    // MARK: - Password Reset
+    //  Password Reset
 
     func sendPasswordReset(email: String) async throws {
         try await authService.sendPasswordReset(email: email)
     }
 
-    // MARK: - Sign Out
+    //  Sign Out
 
     func signOut() {
         do {

@@ -92,13 +92,13 @@ struct SignupView: View {
                    viewModel.confirmPassword = ""
                    viewModel.signupUsername = ""
 
-                   // THIS IS THE IMPORTANT PART
+                   
                 viewModel.email = ""
                 viewModel.password = ""
                 viewModel.confirmPassword = ""
                 viewModel.signupUsername = ""
 
-                // ✅ Clear UI messages (USING CORRECT PROPERTIES)
+                //  Clear UI messages 
                 viewModel.emailError = nil
                 viewModel.passwordError = nil
                 viewModel.confirmPasswordError = nil
@@ -107,7 +107,7 @@ struct SignupView: View {
                }
     }
 
-    // MARK: - Components
+    // Components
 
     func passwordField(title: String, text: Binding<String>, isVisible: Binding<Bool>) -> some View {
         HStack {

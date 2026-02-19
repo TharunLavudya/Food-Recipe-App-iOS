@@ -89,23 +89,29 @@ extension RecipeService {
             }
         }
 
-        func deleteRecipe(
-            recipeId: Int
-        ) async throws {
+    func deleteRecipe(recipeId: Int) async throws {
 
-            guard let uid =
-                Auth.auth().currentUser?.uid
-            else {
-                return
-            }
+        guard let uid =
+            Auth.auth().currentUser?.uid
+        else { return }
 
-            try await db
-                .collection("users")
-                .document(uid)
-                .collection("recipes")
-                .document(String(recipeId))
-                .delete()
-        }
+        let userRef =
+            db.collection("users")
+              .document(uid)
+
+        // Delete recipe
+        try await userRef
+            .collection("recipes")
+            .document(String(recipeId))
+            .delete()
+
+        // Delete favorite reference
+        try await userRef
+            .collection("favorites")
+            .document(String(recipeId))
+            .delete()
+    }
+
         func updateRecipe(recipe: Recipe) async throws {
             
             guard let uid = Auth.auth().currentUser?.uid else { return }

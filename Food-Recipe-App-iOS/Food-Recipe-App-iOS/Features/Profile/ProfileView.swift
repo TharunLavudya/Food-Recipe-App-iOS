@@ -1,6 +1,7 @@
 import SwiftUI
 struct ProfileView: View {
     @StateObject private var viewModel = ProfileViewModel()
+    @EnvironmentObject var homeVM: HomeViewModel
     @State private var selectedSegment = 0
     @State private var recipeCount = 0
     @State private var showOptionsMenu = false  // Toggles the visibility of the options (ellipsis) menu
@@ -187,7 +188,7 @@ struct ProfileView: View {
                     NavigationLink {
                         RecipeDetailView(
                             recipe: recipe,
-                            allRecipes: viewModel.recipes
+                            allRecipes: homeVM.recipes
                         )
                     }label: {
                         recipeCard(

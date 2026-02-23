@@ -11,7 +11,8 @@ struct RecipeRowView: View {
             AsyncImage(url: URL(string: recipe.image)) { image in
                 image.resizable()
             } placeholder: {
-                Color.gray.opacity(0.3)
+                //Color.gray.opacity(0.3)
+                Image("AppLogo")
             }
             .frame(width: 160, height: 120)
             .clipShape(RoundedRectangle(cornerRadius: 16))

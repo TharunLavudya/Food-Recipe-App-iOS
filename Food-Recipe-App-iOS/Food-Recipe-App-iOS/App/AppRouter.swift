@@ -82,7 +82,7 @@ struct MainTabView: View {
             }
             .tag(1)
 
-            FavoritesView()
+            FavoritesView(selectedTab: $selectedTab)
                 .tabItem {
                     Label("Favorites", systemImage: "heart.fill")
                 }

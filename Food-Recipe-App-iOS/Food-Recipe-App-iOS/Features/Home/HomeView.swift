@@ -131,10 +131,7 @@ extension HomeView {
                 .font(.headline)
 
             if viewModel.popularRecipes.isEmpty {
-                Text("No recipes found")
-                .foregroundColor(.secondary)
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.vertical, 8)
+                noResultsView
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 16) {
@@ -199,10 +196,7 @@ extension HomeView {
             Text("New Recipes")
                 .font(.headline)
             if viewModel.newRecipes.isEmpty {
-                Text("No recipes found")
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.vertical, 8)
+                noResultsView
             }else{
                 LazyVStack(spacing: 16) {
                     ForEach(viewModel.newRecipes.prefix(10)) { recipe in
@@ -264,4 +258,46 @@ extension HomeView {
                return "default"
            }
        }
+    private var noResultsView: some View {
+        VStack(spacing: 18) {
+
+            Spacer()
+            ZStack {
+                Circle()
+                    .fill(Color.green.opacity(0.15))
+                    .frame(width: 110, height: 110)
+
+                Image(systemName: "magnifyingglass.circle.fill")
+                    .font(.system(size: 45))
+                    .foregroundColor(.green)
+            }
+            Text("No Recipes Found")
+                .font(.title3.bold())
+
+            Text("Try adjusting your filters or search keyword.")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
+
+            Button {
+                viewModel.filter = .empty
+                viewModel.selectedCategory = "All"
+                viewModel.searchText = ""
+            } label: {
+                Text("Clear Filters")
+                    .fontWeight(.semibold)
+                    .padding()
+                    .frame(width: 200)
+                    .background(Color.green)
+                    .foregroundColor(.white)
+                    .cornerRadius(14)
+            }
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+    }
+    
 }

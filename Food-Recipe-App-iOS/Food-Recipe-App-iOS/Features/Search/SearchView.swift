@@ -59,10 +59,15 @@ struct SearchView: View {
                     Spacer()
 
                     VStack(spacing: 8) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.largeTitle)
-                            .foregroundColor(.gray)
+                        ZStack {
+                            Circle()
+                                .fill(Color.green.opacity(0.15))
+                                .frame(width: 110, height: 110)
 
+                            Image(systemName: "magnifyingglass.circle.fill")
+                                .font(.system(size: 45))
+                                .foregroundColor(.green)
+                        }
                         Text("No Recipes Found")
                             .foregroundColor(.secondary)
                     }

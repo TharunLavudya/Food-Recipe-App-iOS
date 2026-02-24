@@ -21,6 +21,7 @@ final class AddRecipeViewModel: ObservableObject {
 
     @Published var ingredients: [String] = [""]
     @Published var instructions: [String] = [""]
+    @Published var selectedMealType: String = ""
 
     @Published var isLoading = false
     @Published var successMessage: String?
@@ -39,6 +40,11 @@ final class AddRecipeViewModel: ObservableObject {
 
         if cuisine.isEmpty {
             errorMessage = "Please select cuisine"
+            return false
+        }
+        
+        if selectedMealType.isEmpty {
+            errorMessage = "Please select a meal type"
             return false
         }
 
@@ -104,7 +110,7 @@ final class AddRecipeViewModel: ObservableObject {
             image: imageURL,
             rating: 0,
             reviewCount: 0,
-            mealType: []
+            mealType: [selectedMealType]
         )
 
         do {

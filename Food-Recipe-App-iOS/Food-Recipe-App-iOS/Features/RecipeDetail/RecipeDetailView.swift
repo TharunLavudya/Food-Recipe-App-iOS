@@ -108,41 +108,67 @@ struct RecipeDetailView: View {
                     }
 
                     else {
-                        LazyVStack(spacing: 16) {
-                            ForEach(viewModel.relatedRecipes.prefix(5)) { recipe in
-                                NavigationLink {
-                                    RecipeDetailView(
-                                        recipe: recipe,
-                                        allRecipes: homeVM.recipes
-                                    )
-                                } label: {
-                                    HStack(spacing: 12) {
 
-                                        AsyncImage(url: URL(string: recipe.image)) { image in
-                                            image.resizable()
-                                        } placeholder: {
-                                            Color.gray.opacity(0.3)
-                                        }
-                                        .frame(width: 80, height: 80)
-                                        .cornerRadius(12)
+                        if viewModel.hasAnySimilarity {
 
-                                        VStack(alignment: .leading) {
-                                            Text(recipe.name)
-                                                .font(.headline)
+                            VStack(spacing: 16) {
 
-                                            Text("\(recipe.cookTimeMinutes) mins")
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-
-                                        Spacer()
+                                Picker("", selection: $viewModel.selectedSimilarFilter) {
+                                    ForEach(RecipeDetailViewModel.SimilarFilter.allCases, id: \.self) {
+                                        Text($0.rawValue)
                                     }
-                                    .padding()
-                                    .background(Color(.systemGray6))
-                                    .cornerRadius(12)
                                 }
-                                .buttonStyle(.plain)
+                                .pickerStyle(.segmented)
+                                .tint(.green)
+
+                                if viewModel.currentSimilarRecipes.isEmpty {
+
+                                    emptySimilarView
+
+                                } else {
+
+                                    LazyVStack(spacing: 16) {
+
+                                        ForEach(viewModel.currentSimilarRecipes.prefix(5)) { recipe in
+
+                                            NavigationLink {
+                                                RecipeDetailView(
+                                                    recipe: recipe,
+                                                    allRecipes: viewModel.allRecipes
+                                                )
+                                            } label: {
+
+                                                HStack(spacing: 12) {
+
+                                                    AsyncImage(url: URL(string: recipe.image)) { image in
+                                                        image.resizable()
+                                                    } placeholder: {
+                                                        Color.gray.opacity(0.3)
+                                                    }
+                                                    .frame(width: 80, height: 80)
+                                                    .cornerRadius(12)
+
+                                                    VStack(alignment: .leading) {
+                                                        Text(recipe.name)
+                                                            .font(.headline)
+
+                                                        Text("\(recipe.cookTimeMinutes) mins")
+                                                            .font(.caption)
+                                                            .foregroundColor(.secondary)
+                                                    }
+
+                                                    Spacer()
+                                                }
+                                                .padding()
+                                                .background(Color(.systemGray6))
+                                                .cornerRadius(12)
+                                            }
+                                            .buttonStyle(.plain)
+                                        }
+                                    }
+                                }
                             }
+
                         }
                     }
                 }
@@ -169,6 +195,23 @@ struct RecipeDetailView: View {
             .onTapGesture {
                 viewModel.selectTab(tab)
             }
+    }
+    private var emptySimilarView: some View {
+        VStack(spacing: 12) {
+
+            Image(systemName: "tray")
+                .font(.system(size: 40))
+                .foregroundColor(.green)
+
+            Text("No similar recipes found")
+                .font(.subheadline.bold())
+
+            Text("Try exploring other categories.")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
     }
 }
 

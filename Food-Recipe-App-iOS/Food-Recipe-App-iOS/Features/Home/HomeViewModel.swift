@@ -11,6 +11,7 @@ final class HomeViewModel: ObservableObject {
     @Published var selectedCategory: String = "All"
     @Published var searchText: String = ""
     @Published var allCuisines: [String] = []
+    @Published var allMealTypes: [String] = []
     
     @Published var filter: RecipeFilter = .empty
 
@@ -30,12 +31,18 @@ final class HomeViewModel: ObservableObject {
             recipes = try await repository.fetchRecipes()
             setupCategories()
             setupCuisines()
+            setupMealTypes()
             
             userInterests = try await userService.fetchUserInterests()
             filterInterestRecipes()
         } catch {
             print("Failed to load recipes:", error)
         }
+    }
+    
+    private func setupMealTypes() {
+        let types = recipes.flatMap { $0.mealType }
+        allMealTypes = Array(Set(types)).sorted()
     }
     
     private func filterInterestRecipes() {

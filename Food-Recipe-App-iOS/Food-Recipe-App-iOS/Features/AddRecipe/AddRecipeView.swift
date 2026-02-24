@@ -17,6 +17,8 @@ struct AddRecipeView: View {
 
                 basicInfoSection
                 
+                mealTypeSection
+                
                 cuisineSection
 
                 difficultySection
@@ -144,6 +146,36 @@ extension AddRecipeView {
             .background(Color(.systemGray6))
             .cornerRadius(12)
     }
+    
+    private var mealTypeSection: some View {
+        
+        HStack {
+
+            Text("Meal Type")
+                .bold()
+
+            Spacer()
+
+            Picker(
+                "",
+                selection: $viewModel.selectedMealType
+            ) {
+
+                Text("Select")
+                    .tag("")
+
+                ForEach(homeVM.allMealTypes, id: \.self) { type in
+                    Text(type)
+                        .tag(type)
+                }
+            }
+            .pickerStyle(.menu)
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+    }
+    
     private var cuisineSection: some View {
 
         HStack {

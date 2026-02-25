@@ -109,62 +109,51 @@ struct RecipeDetailView: View {
 
                     else {
 
-                        if viewModel.hasAnySimilarity {
+                        if !viewModel.mealTypeSimilarRecipes.isEmpty {
 
-                            VStack(spacing: 16) {
+                            VStack(alignment: .leading, spacing: 16) {
 
-                                Picker("", selection: $viewModel.selectedSimilarFilter) {
-                                    ForEach(RecipeDetailViewModel.SimilarFilter.allCases, id: \.self) {
-                                        Text($0.rawValue)
-                                    }
-                                }
-                                .pickerStyle(.segmented)
-                                .tint(.green)
+//                                Text("More \(viewModel.recipe.mealType.first ?? "") Recipes")
+//                                    .font(.headline)
+                                    
 
-                                if viewModel.currentSimilarRecipes.isEmpty {
+                                LazyVStack(spacing: 16) {
 
-                                    emptySimilarView
+                                    ForEach(viewModel.mealTypeSimilarRecipes.prefix(5)) { recipe in
 
-                                } else {
+                                        NavigationLink {
+                                            RecipeDetailView(
+                                                recipe: recipe,
+                                                allRecipes: viewModel.allRecipes
+                                            )
+                                        } label: {
 
-                                    LazyVStack(spacing: 16) {
+                                            HStack(spacing: 12) {
 
-                                        ForEach(viewModel.currentSimilarRecipes.prefix(5)) { recipe in
-
-                                            NavigationLink {
-                                                RecipeDetailView(
-                                                    recipe: recipe,
-                                                    allRecipes: viewModel.allRecipes
-                                                )
-                                            } label: {
-
-                                                HStack(spacing: 12) {
-
-                                                    AsyncImage(url: URL(string: recipe.image)) { image in
-                                                        image.resizable()
-                                                    } placeholder: {
-                                                        Color.gray.opacity(0.3)
-                                                    }
-                                                    .frame(width: 80, height: 80)
-                                                    .cornerRadius(12)
-
-                                                    VStack(alignment: .leading) {
-                                                        Text(recipe.name)
-                                                            .font(.headline)
-
-                                                        Text("\(recipe.cookTimeMinutes) mins")
-                                                            .font(.caption)
-                                                            .foregroundColor(.secondary)
-                                                    }
-
-                                                    Spacer()
+                                                AsyncImage(url: URL(string: recipe.image)) { image in
+                                                    image.resizable()
+                                                } placeholder: {
+                                                    Color.gray.opacity(0.3)
                                                 }
-                                                .padding()
-                                                .background(Color(.systemGray6))
+                                                .frame(width: 80, height: 80)
                                                 .cornerRadius(12)
+
+                                                VStack(alignment: .leading) {
+                                                    Text(recipe.name)
+                                                        .font(.headline)
+
+                                                    Text("\(recipe.cookTimeMinutes) mins")
+                                                        .font(.caption)
+                                                        .foregroundColor(.secondary)
+                                                }
+
+                                                Spacer()
                                             }
-                                            .buttonStyle(.plain)
+                                            .padding()
+                                            .background(Color(.systemGray6))
+                                            .cornerRadius(12)
                                         }
+                                        .buttonStyle(.plain)
                                     }
                                 }
                             }

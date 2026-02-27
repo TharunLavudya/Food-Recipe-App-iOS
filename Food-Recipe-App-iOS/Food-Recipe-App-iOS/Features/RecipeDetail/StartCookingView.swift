@@ -11,7 +11,7 @@ struct StartCookingView: View {
         ZStack {
 
             // Background
-            Color.green.opacity(0.08)
+            Color.green.opacity(0.04)
                 .ignoresSafeArea()
 
             VStack {
@@ -40,6 +40,7 @@ struct StartCookingView: View {
                     Text(recipe.instructions[currentStep])
 //                        .font(.title2)
                         .font(.custom("Poppins-Bold", size: 20))
+                        .foregroundStyle(.primary)
 //                        .fontWeight(.semibold)
 //                        .font(.italic)
                         .multilineTextAlignment(.center)
@@ -47,8 +48,8 @@ struct StartCookingView: View {
                         .frame(maxWidth: .infinity)
                         .background(
                             RoundedRectangle(cornerRadius: 25)
-                                .fill(Color.white)
-                                .shadow(color: .green.opacity(0.2), radius: 10)
+                                .fill(Color(.systemBackground))
+                                .shadow(color: .green.opacity(0.1), radius: 10)
                         )
                         .animation(.easeInOut(duration: 0.3), value: currentStep)
                 }

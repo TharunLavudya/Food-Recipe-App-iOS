@@ -104,7 +104,22 @@ struct RecipeDetailView: View {
                             .padding()
                             .background(Color(.systemGray6))
                             .cornerRadius(10)
+                            
+                            
                         }
+                    NavigationLink {
+                        StartCookingView(recipe: viewModel.recipe)
+//                            .environmentObject(authViewModel)
+                        }
+                    label: {
+                        Text("Start Cooking")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
+                        }
+                        
                     }
 
                     else {
@@ -112,24 +127,20 @@ struct RecipeDetailView: View {
                         if !viewModel.mealTypeSimilarRecipes.isEmpty {
 
                             VStack(alignment: .leading, spacing: 16) {
-
 //                                Text("More \(viewModel.recipe.mealType.first ?? "") Recipes")
 //                                    .font(.headline)
-                                    
-
                                 LazyVStack(spacing: 16) {
-
                                     ForEach(viewModel.mealTypeSimilarRecipes.prefix(5)) { recipe in
-
+                                        
                                         NavigationLink {
                                             RecipeDetailView(
                                                 recipe: recipe,
                                                 allRecipes: viewModel.allRecipes
                                             )
                                         } label: {
-
+                                            
                                             HStack(spacing: 12) {
-
+                                                
                                                 AsyncImage(url: URL(string: recipe.image)) { image in
                                                     image.resizable()
                                                 } placeholder: {
@@ -137,16 +148,16 @@ struct RecipeDetailView: View {
                                                 }
                                                 .frame(width: 80, height: 80)
                                                 .cornerRadius(12)
-
+                                                
                                                 VStack(alignment: .leading) {
                                                     Text(recipe.name)
                                                         .font(.headline)
-
+                                                    
                                                     Text("\(recipe.cookTimeMinutes) mins")
                                                         .font(.caption)
                                                         .foregroundColor(.secondary)
                                                 }
-
+                                                
                                                 Spacer()
                                             }
                                             .padding()
@@ -157,9 +168,9 @@ struct RecipeDetailView: View {
                                     }
                                 }
                             }
-
                         }
                     }
+                
                 }
             }
             .padding()

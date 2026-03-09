@@ -35,7 +35,7 @@ Users can clearly view all the information required to prepare the dish.
 
 ### Search and Filter
 
-Users can search for recipes by name and filter them based on multiple criteria such as **Preparation Time, Cooking Time, Difficulty Level, Cuisine, and Meal Type**.
+Users can search for recipes by name and filter them based on multiple criteria such as **Cooking Time, Difficulty Level, Rating, Cuisine, and Meal Type**.
 
 Meal types include:
 - Breakfast

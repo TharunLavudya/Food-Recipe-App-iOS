@@ -30,6 +30,7 @@ final class RecipeRepository: RecipeRepositoryProtocol {
 
         return response.recipes
     }
+    
 
     func searchRecipes(query: String) async throws -> [Recipe] {
 

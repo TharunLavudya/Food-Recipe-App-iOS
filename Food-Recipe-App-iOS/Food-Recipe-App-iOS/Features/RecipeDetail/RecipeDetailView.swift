@@ -47,9 +47,15 @@ struct RecipeDetailView: View {
                             .foregroundColor(.secondary)
                     }
 
-                    Text("\(viewModel.recipe.cookTimeMinutes) mins")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    HStack(spacing: 8) {
+
+                        Label("\(viewModel.recipe.cookTimeMinutes) min", systemImage: "clock")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+
+                        DifficultyBadge(difficulty: viewModel.recipe.difficulty)
+                    }
+                        
                 }
 
                 HStack {
@@ -174,6 +180,9 @@ struct RecipeDetailView: View {
                 }
             }
             .padding()
+        }
+        .onAppear {
+            RecentlyViewedManager.shared.add(recipeId: String(viewModel.recipe.id))
         }
         .navigationBarTitleDisplayMode(.inline)
     }

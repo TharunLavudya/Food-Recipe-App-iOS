@@ -26,6 +26,7 @@ struct HomeView: View {
                     headerSection
                     searchSection
 //                    categorySection
+                    recentlyViewedSection
                     popularRecipesSection
                     interestRecipesSection
                     newRecipesSection
@@ -124,6 +125,60 @@ extension HomeView {
 //            }
 //        }
 //    }
+    
+    var recentlyViewedSection: some View {
+        Group {
+            if !viewModel.recentlyViewed.isEmpty {
+                VStack(alignment: .leading) {
+
+                    HStack {
+
+                        HStack {
+                            Image(systemName: "clock.fill")
+                                .foregroundColor(.green)
+
+                            Text("Recently Viewed")
+                                .font(.headline)
+                        }
+
+                        Spacer()
+
+                        Button("Clear") {
+                            RecentlyViewedManager.shared.clear()
+                            viewModel.loadRecentlyViewed()
+                        }
+                        .font(.caption)
+                        .foregroundColor(.red)
+                    }
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+
+                        HStack(spacing: 16) {
+
+                            ForEach(viewModel.recentlyViewed) { recipe in
+
+                                NavigationLink {
+
+                                    RecipeDetailView(
+                                        recipe: recipe,
+                                        allRecipes: viewModel.recipes
+                                    )
+
+                                } label: {
+
+                                    RecipeRowView(recipe: recipe)
+
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                }
+            } else {
+                EmptyView()
+            }
+        }
+    }
 
     var popularRecipesSection: some View {
         VStack(alignment: .leading) {
@@ -160,32 +215,27 @@ extension HomeView {
                 VStack(alignment: .leading) {
                     Text("Based on Your Interests")
                         .font(.headline)
-                    
-                    if viewModel.interestRecipes.isEmpty {
-                        Text("No recipes found")
-                            .foregroundColor(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.vertical, 8)
-                    } else {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 16) {
-                                ForEach(
-                                    viewModel.interestRecipes.prefix(10)
-                                ) { recipe in
-                                    NavigationLink {
-                                        RecipeDetailView(
-                                            recipe: recipe,
-                                            allRecipes: viewModel.recipes
-                                        )
-                                    } label: {
-                                        RecipeRowView(recipe: recipe)
-                                    }
-                                    .buttonStyle(.plain)
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 16) {
+                            ForEach(
+                                viewModel.interestRecipes.prefix(10)
+                            ) { recipe in
+                                NavigationLink {
+                                    RecipeDetailView(
+                                        recipe: recipe,
+                                        allRecipes: viewModel.recipes
+                                    )
+                                } label: {
+                                    RecipeRowView(recipe: recipe)
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
                     }
                 }
+            } else {
+                EmptyView()
             }
         }
     }

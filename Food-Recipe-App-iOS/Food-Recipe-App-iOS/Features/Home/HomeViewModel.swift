@@ -18,10 +18,12 @@ final class HomeViewModel: ObservableObject {
     private let repository: RecipeRepositoryProtocol
     
     private let userService = UserService()
+    private let recipeService = RecipeService()
+    
     @Published var userInterests: [String] = []
     @Published var interestRecipes: [Recipe] = []
-
-
+    @Published var recentlyViewed: [Recipe] = []
+    @Published var userRecipes: [Recipe] = []
     init(repository: RecipeRepositoryProtocol) {
         self.repository = repository
     }
@@ -29,14 +31,29 @@ final class HomeViewModel: ObservableObject {
     func loadRecipes() async {
         do {
             recipes = try await repository.fetchRecipes()
+            userRecipes = try await recipeService.fetchUserRecipes()
             setupCategories()
             setupCuisines()
             setupMealTypes()
+            loadRecentlyViewed()
             
             userInterests = try await userService.fetchUserInterests()
             filterInterestRecipes()
         } catch {
             print("Failed to load recipes:", error)
+        }
+    }
+    
+   
+    func loadRecentlyViewed() {
+
+        let ids = RecentlyViewedManager.shared.getRecentIds()
+
+        let allRecipes = recipes + userRecipes
+
+        recentlyViewed = ids.compactMap { id in
+            guard let intId = Int(id) else { return nil }
+            return allRecipes.first(where: { $0.id == intId })
         }
     }
     
@@ -119,3 +136,4 @@ final class HomeViewModel: ObservableObject {
         filter.difficultyLevels.isEmpty
     }
 }
+

@@ -12,7 +12,7 @@ Users can browse through different recipes and explore various dishes available 
 
 The home screen can also recommend recipes based on the **user's selected interests**, making the experience more personalized.
 
-<img width="210" height="440" alt="Simulator Screenshot - iPhone 17 Pro - 2026-03-09 at 06 04 23" src="https://github.com/user-attachments/assets/d58655db-22a4-49c8-b01c-1207683c478e" />
+<img width="210" height="440" alt="Simulator Screenshot - iPhone 17 Pro - 2026-03-11 at 23 21 17" src="https://github.com/user-attachments/assets/fe873803-9eaf-469c-bbe1-fae638d5b6a2" />
 
 ---
 
@@ -27,9 +27,10 @@ Each recipe contains:
 
 Users can clearly view all the information required to prepare the dish.
 
-<img width="210" height="440" alt="Simulator Screenshot - iPhone 17 Pro - 2026-03-09 at 06 04 35" src="https://github.com/user-attachments/assets/a4868d85-d7cd-4423-9558-8443581e8a57" />
-<img width="210" height="440" alt="Simulator Screenshot - iPhone 17 Pro - 2026-03-09 at 06 06 53" src="https://github.com/user-attachments/assets/a3ef3c6c-a39a-4533-8062-aec0d3935eeb" />
-<img width="210" height="440" alt="Simulator Screenshot - iPhone 17 Pro - 2026-03-09 at 06 06 57" src="https://github.com/user-attachments/assets/84f6fb25-0c96-444e-8b95-bd52d0752547" />
+<img width="210" height="440" alt="Simulator Screenshot - iPhone 17 Pro - 2026-03-11 at 23 26 13" src="https://github.com/user-attachments/assets/df449a42-50f9-4bbb-9c1a-236c8d4c2c81" />
+<img width="210" height="440" alt="Simulator Screenshot - iPhone 17 Pro - 2026-03-11 at 23 26 44" src="https://github.com/user-attachments/assets/bc8b1786-db93-4f2c-afc4-24640a93c0ad" />
+<img width="210" height="440" alt="Simulator Screenshot - iPhone 17 Pro - 2026-03-11 at 23 27 07" src="https://github.com/user-attachments/assets/cff2204b-4b59-4b1b-91bb-2ba6547fa08f" />
+
 
 ---
 

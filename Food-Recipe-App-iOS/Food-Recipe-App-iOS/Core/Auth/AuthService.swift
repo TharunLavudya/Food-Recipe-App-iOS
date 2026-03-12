@@ -6,6 +6,7 @@ protocol AuthService {
     func signOut() throws
     func getCurrentUserId() -> String?
 
+    //  Add this
     func sendPasswordReset(email: String) async throws
 }
 

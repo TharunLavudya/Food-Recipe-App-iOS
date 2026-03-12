@@ -19,6 +19,7 @@ final class FirebaseAuthService: AuthService {
         return Auth.auth().currentUser?.uid
     }
 
+    // ADD THIS METHOD (this fixes your error)
     func sendPasswordReset(email: String) async throws {
         try await Auth.auth().sendPasswordReset(withEmail: email)
     }
